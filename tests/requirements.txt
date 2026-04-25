@@ -1,0 +1,8 @@
+pytest
+requests
+openai
+pytest-asyncio
+aiohttp
+python-dotenv
+boto3
+locust

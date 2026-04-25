@@ -1,0 +1,30 @@
+model_list:
+  # SiliconFlow Models (OpenAI-compatible API gateway for Chinese LLMs)
+  - model_name: glm-4-plus
+    litellm_params:
+      model: openai/Pro/THUDM/GLM-4-Plus
+      api_base: https://api.siliconflow.cn/v1
+      api_key: os.environ/SILICONFLOW_API_KEY
+
+  - model_name: deepseek-v3
+    litellm_params:
+      model: openai/deepseek-ai/DeepSeek-V3
+      api_base: https://api.siliconflow.cn/v1
+      api_key: os.environ/SILICONFLOW_API_KEY
+
+  - model_name: qwen3-235b
+    litellm_params:
+      model: openai/Qwen/Qwen3-235B-A22B
+      api_base: https://api.siliconflow.cn/v1
+      api_key: os.environ/SILICONFLOW_API_KEY
+
+  # DeepSeek Direct API
+  - model_name: deepseek-chat
+    litellm_params:
+      model: deepseek/deepseek-chat
+      api_key: os.environ/DEEPSEEK_API_KEY
+
+  - model_name: deepseek-reasoner
+    litellm_params:
+      model: deepseek/deepseek-reasoner
+      api_key: os.environ/DEEPSEEK_API_KEY
