@@ -75,7 +75,7 @@ aws ec2 authorize-security-group-ingress \
 
 ## Architecture
 
-![Reference Architecture Diagram](./media/Gateway-Architecture-with-CloudFront.png)
+![Reference Architecture Diagram](./media/architecture.png)
 
 ### Architecture Steps
 
