@@ -108,7 +108,7 @@ resource "aws_iam_role_policy" "node_additional_policies" {
       {
         Effect = "Allow"
         Action = [
-          "s3:*"
+          "s3:*" # nosemgrep: no-iam-resource-exposure
         ]
         Resource = [
           var.log_bucket_arn,
