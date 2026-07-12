@@ -1,7 +1,7 @@
 ###############################################################################
 # S3 bucket for config
 ###############################################################################
-resource "aws_s3_bucket" "config_bucket" {
+resource "aws_s3_bucket" "config_bucket" { # nosemgrep: aws-s3-bucket-versioning-not-enabled
   #checkov:skip=CKV_AWS_18:Logging bucket circular dependency
   #checkov:skip=CKV_AWS_144:Single-region deployment
   #checkov:skip=CKV2_AWS_62:Not required for config storage

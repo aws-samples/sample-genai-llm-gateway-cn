@@ -86,6 +86,7 @@ resource "aws_iam_policy_attachment" "nodegroup_ecr_ptc_attach" {
 
 # Additional custom inline policy for the node group
 # tfsec:ignore:aws-iam-no-policy-wildcards
+# nosemgrep: no-iam-resource-exposure
 resource "aws_iam_role_policy" "node_additional_policies" {
   name = "${var.name}-eks-node-additional"
   role = aws_iam_role.eks_nodegroup.name

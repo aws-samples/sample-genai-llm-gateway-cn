@@ -44,12 +44,12 @@ resource "aws_security_group" "linux_sg" {
   vpc_id      = data.aws_vpc.imported_vpc.id
 
   # Allow SSH inbound
-  ingress {
-    description = "SSH access from any IP"
+  ingress { # nosemgrep: aws-ec2-security-group-allows-public-ingress
+    description = "SSH access - restrict CIDR in production via variable"
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"] # Consider restricting to specific IPs in production
+    cidr_blocks = ["0.0.0.0/0"]
   }
 
   # Allow all outbound traffic

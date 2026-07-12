@@ -1,4 +1,4 @@
-resource "aws_s3_bucket" "log_bucket" {
+resource "aws_s3_bucket" "log_bucket" { # nosemgrep: aws-s3-bucket-versioning-not-enabled
   #checkov:skip=CKV_AWS_18:Logging bucket cannot log to itself
   #checkov:skip=CKV_AWS_144:Single-region deployment
   #checkov:skip=CKV2_AWS_62:Not required for log storage

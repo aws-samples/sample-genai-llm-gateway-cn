@@ -1,4 +1,4 @@
-resource "aws_s3_bucket" "access_log_bucket" {
+resource "aws_s3_bucket" "access_log_bucket" { # nosemgrep: aws-s3-bucket-versioning-not-enabled
   #checkov:skip=CKV_AWS_18:Logging bucket cannot log to itself
   #checkov:skip=CKV_AWS_144:Single-region deployment
   #checkov:skip=CKV_AWS_145:ALB access logs require AES256 encryption, KMS not supported

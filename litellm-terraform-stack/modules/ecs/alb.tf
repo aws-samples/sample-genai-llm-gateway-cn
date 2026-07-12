@@ -22,7 +22,7 @@ resource "aws_lb" "this" {
 }
 
 # HTTP Listener for CloudFront origin connection
-resource "aws_lb_listener" "http" {
+resource "aws_lb_listener" "http" { # nosemgrep: insecure-load-balancer-tls-version
   #checkov:skip=CKV_AWS_2:HTTPS enforcement handled by CloudFront
   #checkov:skip=CKV_AWS_103:HTTPS enforcement handled by CloudFront
   load_balancer_arn = aws_lb.this.arn

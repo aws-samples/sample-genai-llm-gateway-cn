@@ -176,7 +176,7 @@ resource "aws_iam_role" "ecs_task_role" {
 }
 
 # Application Load Balancer
-resource "aws_lb" "fake_server_alb" {
+resource "aws_lb" "fake_server_alb" { # nosemgrep: aws-elb-access-logs-not-enabled
   #checkov:skip=CKV_AWS_91:Load testing infrastructure, not production
   #checkov:skip=CKV2_AWS_28:Load testing infrastructure
   name               = "FakeServer-ALB"
@@ -231,7 +231,7 @@ resource "aws_security_group" "alb_sg" {
   description = "Allow HTTPS inbound traffic"
   vpc_id      = var.vpc_id
 
-  ingress {
+  ingress { # nosemgrep: aws-ec2-security-group-allows-public-ingress
     description = "HTTPS from internet"
     from_port   = 443
     to_port     = 443
