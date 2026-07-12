@@ -74,7 +74,7 @@ resource "aws_security_group_rule" "db_ingress" {
   protocol          = "tcp"
   cidr_blocks       = [data.aws_vpc.existing.cidr_block]
   security_group_id = data.aws_security_group.db.id
-  description              = "Allow EKS tasks to connect to RDS"
+  description       = "Allow EKS tasks to connect to RDS"
 }
 
 # Add ingress rules to Redis security group
@@ -85,11 +85,11 @@ resource "aws_security_group_rule" "redis_ingress" {
   protocol          = "tcp"
   cidr_blocks       = [data.aws_vpc.existing.cidr_block]
   security_group_id = data.aws_security_group.redis.id
-  description              = "Allow EKS tasks to connect to Redis"
+  description       = "Allow EKS tasks to connect to Redis"
 }
 
 resource "aws_iam_role_policy_attachment" "eks_cluster_policy" {
-  count = var.create_cluster ? 1 : 0
+  count      = var.create_cluster ? 1 : 0
   role       = aws_iam_role.eks_cluster[0].name
   policy_arn = "arn:${data.aws_partition.current.partition}:iam::aws:policy/AmazonEKSClusterPolicy"
 }
@@ -117,6 +117,7 @@ resource "aws_iam_role" "eks_cluster" {
   })
 }
 
+#checkov:skip=CKV_AWS_339:EKS version managed by cluster upgrade lifecycle
 resource "aws_eks_cluster" "this" {
   count = var.create_cluster ? 1 : 0
 
@@ -171,11 +172,11 @@ data "aws_eks_cluster_auth" "existing" {
 locals {
   # If create_cluster is true, reference the newly-created EKS cluster;
   # otherwise reference the existing EKS cluster data source.
-  cluster_name = var.create_cluster ? aws_eks_cluster.this[0].name : data.aws_eks_cluster.existing[0].name
-  cluster_endpoint = var.create_cluster ? aws_eks_cluster.this[0].endpoint : data.aws_eks_cluster.existing[0].endpoint
-  cluster_ca = var.create_cluster ? aws_eks_cluster.this[0].certificate_authority[0].data : data.aws_eks_cluster.existing[0].certificate_authority[0].data
+  cluster_name              = var.create_cluster ? aws_eks_cluster.this[0].name : data.aws_eks_cluster.existing[0].name
+  cluster_endpoint          = var.create_cluster ? aws_eks_cluster.this[0].endpoint : data.aws_eks_cluster.existing[0].endpoint
+  cluster_ca                = var.create_cluster ? aws_eks_cluster.this[0].certificate_authority[0].data : data.aws_eks_cluster.existing[0].certificate_authority[0].data
   cluster_security_group_id = var.create_cluster ? aws_eks_cluster.this[0].vpc_config[0].cluster_security_group_id : data.aws_eks_cluster.existing[0].vpc_config[0].cluster_security_group_id
-  cluster_tls_url = var.create_cluster ? aws_eks_cluster.this[0].identity[0].oidc[0].issuer : data.aws_eks_cluster.existing[0].identity[0].oidc[0].issuer
+  cluster_tls_url           = var.create_cluster ? aws_eks_cluster.this[0].identity[0].oidc[0].issuer : data.aws_eks_cluster.existing[0].identity[0].oidc[0].issuer
 }
 
 
@@ -246,7 +247,7 @@ resource "aws_eks_addon" "cloudwatch_observability" {
 }
 
 resource "aws_eks_pod_identity_association" "cloudwatch_observability" {
-  count = var.create_cluster || var.install_add_ons_in_existing_eks_cluster ? 1 : 0
+  count           = var.create_cluster || var.install_add_ons_in_existing_eks_cluster ? 1 : 0
   cluster_name    = local.cluster_name
   namespace       = "amazon-cloudwatch"
   service_account = "cloudwatch-agent"
@@ -258,10 +259,10 @@ resource "aws_eks_pod_identity_association" "cloudwatch_observability" {
 # EKS Managed Node Group (replacing eks_managed_node_groups in the module)    #
 ###############################################################################
 resource "aws_eks_node_group" "core_nodegroup" {
-  cluster_name    = local.cluster_name
+  cluster_name           = local.cluster_name
   node_group_name_prefix = "core_nodegroup"
-  node_role_arn   = aws_iam_role.eks_nodegroup.arn
-  subnet_ids      = concat(data.aws_subnets.private.ids)
+  node_role_arn          = aws_iam_role.eks_nodegroup.arn
+  subnet_ids             = concat(data.aws_subnets.private.ids)
 
   scaling_config {
     desired_size = var.desired_capacity
@@ -276,7 +277,7 @@ resource "aws_eks_node_group" "core_nodegroup" {
   ami_type = var.architecture == "x86" ? var.x86_ami_type : var.arm_ami_type
 
   depends_on = [
-    aws_eks_access_entry.developers, 
+    aws_eks_access_entry.developers,
     aws_eks_access_entry.operators,
     aws_eks_cluster.this,
     aws_eks_access_entry.admin,
@@ -303,10 +304,10 @@ resource "aws_eks_access_entry" "operators" {
 locals {
   # Split the ARN into components
   arn_parts = split(":", data.aws_caller_identity.current.arn)
-  
+
   # Determine if this is a user or assumed role
   is_assumed_role = length(regexall("assumed-role", local.arn_parts[5])) > 0
-  
+
   role_name = split("/", data.aws_caller_identity.current.arn)[1]
   # Construct the appropriate ARN
   principal_arn = local.is_assumed_role ? "arn:${data.aws_partition.current.partition}:iam::${data.aws_caller_identity.current.account_id}:role/${local.role_name}" : data.aws_caller_identity.current.arn
@@ -314,16 +315,16 @@ locals {
 
 
 resource "aws_eks_access_entry" "admin" {
-  count = var.create_cluster ? 1 : 0
-  cluster_name      = local.cluster_name
+  count         = var.create_cluster ? 1 : 0
+  cluster_name  = local.cluster_name
   principal_arn = local.principal_arn
-  type              = "STANDARD"
-  user_name         = "admin-user"
+  type          = "STANDARD"
+  user_name     = "admin-user"
 }
 
 # 2) Associate the AmazonEKSClusterAdminPolicy to that entry
 resource "aws_eks_access_policy_association" "admin_policy" {
-  count = var.create_cluster ? 1 : 0
+  count         = var.create_cluster ? 1 : 0
   cluster_name  = local.cluster_name
   principal_arn = aws_eks_access_entry.admin[0].principal_arn
   policy_arn    = "arn:${data.aws_partition.current.partition}:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy"

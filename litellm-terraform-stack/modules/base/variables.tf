@@ -22,7 +22,7 @@ variable "ecrMiddlewareRepository" {
 variable "deployment_platform" {
   description = "Which platform to deploy (ECS or EKS)"
   type        = string
-  
+
   validation {
     condition     = can(regex("^(ECS|EKS)$", upper(var.deployment_platform)))
     error_message = "DEPLOYMENT_PLATFORM must be either 'ECS' or 'EKS' (case insensitive)."
@@ -30,12 +30,12 @@ variable "deployment_platform" {
 }
 
 variable "disable_outbound_network_access" {
-    description = "Whether to disable outbound network access"
-    type = bool
+  description = "Whether to disable outbound network access"
+  type        = bool
 }
 
 variable "create_vpc_endpoints_in_existing_vpc" {
-  type    = bool
+  type        = bool
   description = "If using an existing VPC, set this to true to also create interface/gateway endpoints within it."
 }
 
@@ -47,7 +47,7 @@ variable "hostedZoneName" {
 
 variable "publicLoadBalancer" {
   description = "Whether the load balancer is public or private"
-  type = bool
+  type        = bool
 }
 
 variable "create_private_hosted_zone_in_existing_vpc" {

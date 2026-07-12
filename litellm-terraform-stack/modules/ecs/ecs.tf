@@ -220,11 +220,11 @@ DEFINITION
 # (9) ECS Service with 2 Target Groups
 ###############################################################################
 resource "aws_ecs_service" "litellm_service" {
-  name            = "LiteLLMService"
-  cluster         = aws_ecs_cluster.this.id
-  task_definition = aws_ecs_task_definition.litellm.arn
-  desired_count   = var.desired_capacity
-  launch_type     = "FARGATE"
+  name                              = "LiteLLMService"
+  cluster                           = aws_ecs_cluster.this.id
+  task_definition                   = aws_ecs_task_definition.litellm.arn
+  desired_count                     = var.desired_capacity
+  launch_type                       = "FARGATE"
   health_check_grace_period_seconds = 300
 
   network_configuration {

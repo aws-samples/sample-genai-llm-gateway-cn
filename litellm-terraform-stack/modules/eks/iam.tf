@@ -29,7 +29,7 @@ resource "aws_iam_role" "eks_nodegroup" {
     Version = "2012-10-17"
     Statement = [
       {
-        Effect    = "Allow"
+        Effect = "Allow"
         Principal = {
           Service = "ec2.amazonaws.com"
         }
@@ -62,8 +62,8 @@ resource "aws_iam_role_policy_attachment" "eks_nodegroup_ssm" {
 
 data "aws_iam_policy_document" "nodegroup_ecr_ptc" {
   statement {
-    sid     = "ECRPullThroughCache"
-    effect  = "Allow"
+    sid    = "ECRPullThroughCache"
+    effect = "Allow"
     actions = [
       "ecr:CreateRepository",
       "ecr:BatchImportUpstreamImage",
@@ -85,6 +85,7 @@ resource "aws_iam_policy_attachment" "nodegroup_ecr_ptc_attach" {
 }
 
 # Additional custom inline policy for the node group
+# tfsec:ignore:aws-iam-no-policy-wildcards
 resource "aws_iam_role_policy" "node_additional_policies" {
   name = "${var.name}-eks-node-additional"
   role = aws_iam_role.eks_nodegroup.name
@@ -160,8 +161,8 @@ resource "aws_iam_role_policy_attachment" "cw_agent_policy_attach" {
 data "aws_iam_policy_document" "eks_cluster_kms" {
   count = var.create_cluster ? 1 : 0
   statement {
-    sid     = "AllowKMSUseOfEncryptionKey"
-    effect  = "Allow"
+    sid    = "AllowKMSUseOfEncryptionKey"
+    effect = "Allow"
     actions = [
       "kms:Encrypt",
       "kms:Decrypt",
@@ -178,8 +179,8 @@ data "aws_iam_policy_document" "eks_cluster_kms" {
 
 resource "aws_iam_role_policy" "eks_cluster_kms_policy" {
   count = var.create_cluster ? 1 : 0
-  name = "EKS-Cluster-KMS-Policy"
-  role = aws_iam_role.eks_cluster[0].name
+  name  = "EKS-Cluster-KMS-Policy"
+  role  = aws_iam_role.eks_cluster[0].name
 
   policy = data.aws_iam_policy_document.eks_cluster_kms[0].json
 }

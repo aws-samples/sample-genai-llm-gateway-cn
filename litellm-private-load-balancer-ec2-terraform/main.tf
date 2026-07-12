@@ -37,6 +37,7 @@ data "aws_ami" "amazon_linux" {
 }
 
 # Create Security Group for the Linux instance
+#checkov:skip=CKV_AWS_24:SSH CIDR configurable via variable
 resource "aws_security_group" "linux_sg" {
   name        = "LinuxInstanceSG"
   description = "Security group for Linux EC2 instance"
@@ -97,13 +98,19 @@ resource "aws_iam_instance_profile" "ec2_instance_profile" {
 
 # Launch an EC2 instance with Amazon Linux
 resource "aws_instance" "linux_instance" {
-  ami                    = data.aws_ami.amazon_linux.id
-  instance_type          = "t3.small"
-  subnet_id              = length(data.aws_subnets.public_subnets.ids) > 0 ? data.aws_subnets.public_subnets.ids[0] : null
-  vpc_security_group_ids = [aws_security_group.linux_sg.id]
-  key_name               = var.key_pair_name
-  iam_instance_profile   = aws_iam_instance_profile.ec2_instance_profile.name
+  ami                         = data.aws_ami.amazon_linux.id
+  instance_type               = "t3.small"
+  subnet_id                   = length(data.aws_subnets.public_subnets.ids) > 0 ? data.aws_subnets.public_subnets.ids[0] : null
+  vpc_security_group_ids      = [aws_security_group.linux_sg.id]
+  key_name                    = var.key_pair_name
+  iam_instance_profile        = aws_iam_instance_profile.ec2_instance_profile.name
   associate_public_ip_address = false
+  monitoring                  = true
+  ebs_optimized               = true
+
+  root_block_device {
+    encrypted = true
+  }
 
   metadata_options {
     http_endpoint = "enabled"

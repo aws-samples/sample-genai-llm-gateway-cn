@@ -39,12 +39,12 @@ output "EksAlbControllerPrivateEcrRepositoryName" {
 
 output "private_subnet_ids" {
   description = "List of IDs of private subnets"
-  value = local.creating_new_vpc ? local.new_private_subnet_ids : local.existing_private_subnet_ids
+  value       = local.creating_new_vpc ? local.new_private_subnet_ids : local.existing_private_subnet_ids
 }
 
 output "public_subnet_ids" {
   description = "List of IDs of public subnets"
-  value = local.creating_new_vpc ? local.new_public_subnet_ids : local.existing_public_subnet_ids
+  value       = local.creating_new_vpc ? local.new_public_subnet_ids : local.existing_public_subnet_ids
 }
 
 ###############################################################################
@@ -106,7 +106,7 @@ output "RedisPort" {
 
 output "RedisPassword" {
   description = "The Redis password"
-  value = random_password.redis_password_main.result
+  value       = random_password.redis_password_main.result
 }
 
 output "LitellmMasterAndSaltKeySecretArn" {

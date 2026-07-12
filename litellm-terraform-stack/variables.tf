@@ -1,7 +1,7 @@
 variable "deployment_platform" {
   description = "Which platform to deploy (ECS or EKS)"
   type        = string
-  
+
   validation {
     condition     = can(regex("^(ECS|EKS)$", upper(var.deployment_platform)))
     error_message = "DEPLOYMENT_PLATFORM must be either 'ECS' or 'EKS' (case insensitive)."
@@ -21,8 +21,8 @@ variable "name" {
 }
 
 variable "vpc_id" {
-  type      = string
-  default   = ""
+  type        = string
+  default     = ""
   description = "If set, use this VPC instead of creating a new one. Leave empty to create a new VPC."
 }
 
@@ -238,28 +238,28 @@ variable "architecture" {
 }
 
 variable "disable_outbound_network_access" {
-    description = "Whether to disable outbound network access for the EKS Cluster"
-    type = bool
+  description = "Whether to disable outbound network access for the EKS Cluster"
+  type        = bool
 }
 
 variable "desired_capacity" {
   description = "Desired Capacity on the node group and deployment"
-  type = number
+  type        = number
 }
 
 variable "min_capacity" {
   description = "Min Capacity on the node group"
-  type = number
+  type        = number
 }
 
 variable "max_capacity" {
   description = "Max Capacity on the node group"
-  type = number
+  type        = number
 }
 
 variable "public_load_balancer" {
   description = "whether the load balancer is public"
-  type = bool
+  type        = bool
 }
 
 variable "allowed_cidrs" {
@@ -268,7 +268,7 @@ variable "allowed_cidrs" {
   default     = []
 
   validation {
-    condition = !contains(var.allowed_cidrs, "0.0.0.0/0")
+    condition     = !contains(var.allowed_cidrs, "0.0.0.0/0")
     error_message = "0.0.0.0/0 is not allowed in allowed_cidrs. Leave empty for no inbound, or specify explicit CIDR blocks."
   }
 }
@@ -276,17 +276,17 @@ variable "allowed_cidrs" {
 //ECS Only Variables
 variable "cpu_target_utilization_percent" {
   description = "CPU target utilization percent for autoscale"
-  type = number
+  type        = number
 }
 
 variable "memory_target_utilization_percent" {
   description = "Memory target utilization percent for autoscale"
-  type = number
+  type        = number
 }
 
 variable "vcpus" {
   description = "Number of ECS vcpus"
-  type = number
+  type        = number
 }
 
 # EKS Only Variables
@@ -309,31 +309,31 @@ variable "create_cluster" {
 
 variable "install_add_ons_in_existing_eks_cluster" {
   description = "Whether to install add ons onto an existing EKS Cluster"
-  type = bool
+  type        = bool
 }
 
 variable "arm_instance_type" {
   description = "Instance type for arm deployment"
-  type = string
+  type        = string
 }
 
 variable "x86_instance_type" {
   description = "Instance type for x86 deployment"
-  type = string
+  type        = string
 }
 
 variable "arm_ami_type" {
   description = "AMI type for arm deployment"
-  type = string
+  type        = string
 }
 
 variable "x86_ami_type" {
   description = "AMI type for x86 deployment"
-  type = string
+  type        = string
 }
 
 variable "create_vpc_endpoints_in_existing_vpc" {
-  type    = bool
+  type        = bool
   description = "If using an existing VPC, set this to true to also create interface/gateway endpoints within it."
 }
 
@@ -368,27 +368,27 @@ variable "redis_num_cache_clusters" {
 }
 
 variable "disable_swagger_page" {
-  type    = bool
+  type        = bool
   description = "Whether to disable the swagger page or not"
 }
 
 variable "disable_admin_ui" {
-  type    = bool
+  type        = bool
   description = "Whether to disable the admin UI or not"
 }
 
 variable "langfuse_public_key" {
-  type    = string
+  type        = string
   description = "the public key of your langfuse deployment"
 }
 
 variable "langfuse_secret_key" {
-  type    = string
+  type        = string
   description = "the secret key of your langfuse deployment"
 }
 
 variable "langfuse_host" {
-  type    = string
+  type        = string
   description = "the hostname of your langfuse deployment. Optional, defaults to https://cloud.langfuse.com"
-  default = "https://cloud.langfuse.com"
+  default     = "https://cloud.langfuse.com"
 }

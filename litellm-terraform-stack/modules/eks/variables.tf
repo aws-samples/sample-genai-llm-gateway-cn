@@ -285,8 +285,8 @@ variable "architecture" {
 }
 
 variable "disable_outbound_network_access" {
-    description = "Whether to disable outbound network access for the EKS Cluster"
-    type = bool
+  description = "Whether to disable outbound network access for the EKS Cluster"
+  type        = bool
 }
 
 variable "eks_alb_controller_private_ecr_repository_name" {
@@ -296,70 +296,70 @@ variable "eks_alb_controller_private_ecr_repository_name" {
 
 variable "install_add_ons_in_existing_eks_cluster" {
   description = "Whether to install add ons onto an existing EKS Cluster"
-  type = bool
+  type        = bool
 }
 
 variable "desired_capacity" {
   description = "Desired Capacity on the node group and deployment"
-  type = number
+  type        = number
 }
 
 variable "min_capacity" {
   description = "Min Capacity on the node group"
-  type = number
+  type        = number
 }
 
 variable "max_capacity" {
   description = "Max Capacity on the node group"
-  type = number
+  type        = number
 }
 
 variable "arm_instance_type" {
   description = "Instance type for arm deployment"
-  type = string
+  type        = string
 }
 
 variable "x86_instance_type" {
   description = "Instance type for x86 deployment"
-  type = string
+  type        = string
 }
 
 variable "arm_ami_type" {
   description = "AMI type for arm deployment"
-  type = string
+  type        = string
 }
 
 variable "x86_ami_type" {
   description = "AMI type for x86 deployment"
-  type = string
+  type        = string
 }
 
 variable "public_load_balancer" {
   description = "whether the load balancer is public"
-  type = bool
+  type        = bool
 }
 
 variable "disable_swagger_page" {
-  type    = bool
+  type        = bool
   description = "Whether to disable the swagger page or not"
 }
 
 variable "disable_admin_ui" {
-  type    = bool
+  type        = bool
   description = "Whether to disable the admin UI or not"
 }
 
 variable "langfuse_public_key" {
-  type    = string
+  type        = string
   description = "the public key of your langfuse deployment"
 }
 
 variable "langfuse_secret_key" {
-  type    = string
+  type        = string
   description = "the secret key of your langfuse deployment"
 }
 
 variable "langfuse_host" {
-  type    = string
+  type        = string
   description = "the hostname of your langfuse deployment."
 }

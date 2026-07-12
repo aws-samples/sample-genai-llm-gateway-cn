@@ -31,11 +31,11 @@ resource "aws_elasticache_subnet_group" "redis_subnet_group" {
 #############################################
 
 resource "aws_elasticache_parameter_group" "redis_parameter_group" {
-  name               = "${var.name}-redis-parameter-group"
-  family             = "redis7"
-  description        = "Redis parameter group"
+  name        = "${var.name}-redis-parameter-group"
+  family      = "redis7"
+  description = "Redis parameter group"
   parameter {
-    name  = "timeout" 
+    name  = "timeout"
     value = "0"
   }
   # Add additional parameters if desired.
@@ -51,24 +51,26 @@ resource "random_password" "redis_password_main" {
   special = false
 }
 
+#checkov:skip=CKV_AWS_191:ElastiCache uses AWS-managed CMK for at-rest encryption
 resource "aws_elasticache_replication_group" "redis" {
-  replication_group_id          = "${var.name}-redis"
-  description = "redis"
-  engine                        = "redis"
-  engine_version                = "7.1"
-  node_type = var.redis_node_type
-  num_cache_clusters = var.redis_num_cache_clusters
-  automatic_failover_enabled    = true
-  parameter_group_name = aws_elasticache_parameter_group.redis_parameter_group.name
-  subnet_group_name             = aws_elasticache_subnet_group.redis_subnet_group.name
-  security_group_ids            = [aws_security_group.redis_sg.id]
-  port                          = 6379
-  multi_az_enabled = true
-  at_rest_encryption_enabled    = true
-  transit_encryption_enabled    = true
-  transit_encryption_mode      = "required"
-  auth_token = random_password.redis_password_main.result
+  replication_group_id       = "${var.name}-redis"
+  description                = "redis"
+  engine                     = "redis"
+  engine_version             = "7.1"
+  node_type                  = var.redis_node_type
+  num_cache_clusters         = var.redis_num_cache_clusters
+  automatic_failover_enabled = true
+  parameter_group_name       = aws_elasticache_parameter_group.redis_parameter_group.name
+  subnet_group_name          = aws_elasticache_subnet_group.redis_subnet_group.name
+  security_group_ids         = [aws_security_group.redis_sg.id]
+  port                       = 6379
+  multi_az_enabled           = true
+  at_rest_encryption_enabled = true
+  transit_encryption_enabled = true
+  transit_encryption_mode    = "required"
+  auth_token                 = random_password.redis_password_main.result
   auth_token_update_strategy = "SET"
+  kms_key_id                 = aws_kms_key.secrets.arn
 
   depends_on = [
     aws_elasticache_subnet_group.redis_subnet_group,

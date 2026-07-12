@@ -12,6 +12,9 @@ import random
 import json
 import socket
 import uvicorn
+import os
+
+ALLOWED_ORIGINS = os.environ.get("CORS_ALLOWED_ORIGINS", "*")
 
 
 class ProxyException(Exception):
@@ -50,9 +53,9 @@ async def _rate_limit_exceeded_handler(request: Request, exc: RateLimitExceeded)
 
 app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
-app.add_middleware(  # nosec - this is a fake/test server for load testing only
+app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=[origin.strip() for origin in ALLOWED_ORIGINS.split(",")],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

@@ -6,4 +6,7 @@ ARG LITELLM_BASE_IMAGE=ghcr.io/berriai/litellm:${LITELLM_VERSION}
 FROM ${LITELLM_BASE_IMAGE}
 
 HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
-  CMD python -c "import urllib.request; urllib.request.urlopen('http://localhost:4000/health/liveliness')" || exit 1
+  CMD ["python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:4000/health/liveliness')"]
+
+# Run as non-root user
+USER nobody

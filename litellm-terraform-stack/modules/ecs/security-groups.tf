@@ -12,11 +12,11 @@ resource "aws_security_group" "ecs_service_sg" {
   vpc_id      = var.vpc_id
 
   egress {
-    from_port        = 0
-    to_port          = 0
-    protocol         = "-1"  # "-1" represents all protocols
-    cidr_blocks      = ["0.0.0.0/0"]
-    description      = "Allow all outbound traffic by default"
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1" # "-1" represents all protocols
+    cidr_blocks = ["0.0.0.0/0"]
+    description = "Allow all outbound traffic by default"
   }
 }
 
@@ -72,7 +72,7 @@ resource "aws_security_group" "alb_sg" {
   # to support dynamic allowed_cidrs
 
   tags = {
-    Name = "${var.name}-alb-sg"
+    Name          = "${var.name}-alb-sg"
     SecurityModel = var.use_cloudfront ? "CloudFront-Protected" : (var.public_load_balancer ? "Public-WAF-Protected" : "Private-VPC-Only")
   }
 

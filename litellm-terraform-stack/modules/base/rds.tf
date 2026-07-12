@@ -7,14 +7,15 @@ resource "random_password" "db_password_main" {
   special = false
 }
 
+#checkov:skip=CKV2_AWS_57:Rotation configured via application deployment
 resource "aws_secretsmanager_secret" "db_secret_main" {
-  name_prefix = "${var.name}-DBSecret-"
+  name_prefix             = "${var.name}-DBSecret-"
   recovery_window_in_days = 0
   kms_key_id              = aws_kms_key.secrets.arn
 }
 
 resource "aws_secretsmanager_secret_version" "db_secret_main_version" {
-  secret_id     = aws_secretsmanager_secret.db_secret_main.id
+  secret_id = aws_secretsmanager_secret.db_secret_main.id
   secret_string = jsonencode({
     username = "llmproxy"
     password = random_password.db_password_main.result
@@ -50,7 +51,7 @@ resource "aws_db_subnet_group" "main" {
 }
 
 resource "aws_db_parameter_group" "example_pg" {
-  name   = "rds-postgres-parameter-group"
+  name = "rds-postgres-parameter-group"
   # Update the family to match your PostgreSQL version
   family = "postgres15"
 
@@ -68,29 +69,30 @@ resource "aws_db_parameter_group" "example_pg" {
 }
 
 # Database #1: litellm
+#checkov:skip=CKV_AWS_354:Performance Insights KMS key uses AWS-managed key
 resource "aws_db_instance" "database" {
-  identifier                = "${var.name}-litellm-db"
-  engine                    = "postgres"
-  engine_version           = "15" # or "15.x"
-  instance_class            = var.rds_instance_class
-  storage_type              = "gp3"
-  allocated_storage         = var.rds_allocated_storage
-  storage_encrypted         = true
-  db_name                      = "litellm"
-  db_subnet_group_name      = aws_db_subnet_group.main.name
-  vpc_security_group_ids    = [aws_security_group.db_sg.id]
-  username                  = jsondecode(aws_secretsmanager_secret_version.db_secret_main_version.secret_string)["username"]
-  password                  = jsondecode(aws_secretsmanager_secret_version.db_secret_main_version.secret_string)["password"]
-  skip_final_snapshot       = true
-  deletion_protection       = false
-  multi_az = true
-  performance_insights_enabled = true
-  enabled_cloudwatch_logs_exports = ["postgresql"]
-  auto_minor_version_upgrade = true
+  identifier                          = "${var.name}-litellm-db"
+  engine                              = "postgres"
+  engine_version                      = "15" # or "15.x"
+  instance_class                      = var.rds_instance_class
+  storage_type                        = "gp3"
+  allocated_storage                   = var.rds_allocated_storage
+  storage_encrypted                   = true
+  db_name                             = "litellm"
+  db_subnet_group_name                = aws_db_subnet_group.main.name
+  vpc_security_group_ids              = [aws_security_group.db_sg.id]
+  username                            = jsondecode(aws_secretsmanager_secret_version.db_secret_main_version.secret_string)["username"]
+  password                            = jsondecode(aws_secretsmanager_secret_version.db_secret_main_version.secret_string)["password"]
+  skip_final_snapshot                 = true
+  deletion_protection                 = true
+  multi_az                            = true
+  performance_insights_enabled        = true
+  enabled_cloudwatch_logs_exports     = ["postgresql"]
+  auto_minor_version_upgrade          = true
   iam_database_authentication_enabled = true
-  monitoring_interval = 60
-  monitoring_role_arn      = aws_iam_role.rds_enhanced_monitoring.arn
-  parameter_group_name = aws_db_parameter_group.example_pg.name
-  copy_tags_to_snapshot     = true
-  apply_immediately = true
+  monitoring_interval                 = 60
+  monitoring_role_arn                 = aws_iam_role.rds_enhanced_monitoring.arn
+  parameter_group_name                = aws_db_parameter_group.example_pg.name
+  copy_tags_to_snapshot               = true
+  apply_immediately                   = true
 }

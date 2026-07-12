@@ -3,7 +3,7 @@ data "aws_partition" "current" {}
 # VPC Flow Logs to CloudWatch, replicating cdk FlowLog to logs with 1 minute interval
 # In Terraform, we need an IAM role to publish flow logs to CloudWatch.
 resource "aws_iam_role" "vpc_flow_logs_role" {
-  count = local.creating_new_vpc ? 1 : 0
+  count              = local.creating_new_vpc ? 1 : 0
   name               = "${var.name}-vpc-flow-logs-role"
   assume_role_policy = data.aws_iam_policy_document.vpc_flow_logs_assume.json
 }

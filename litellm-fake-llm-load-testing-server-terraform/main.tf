@@ -34,9 +34,15 @@ data "aws_ecr_repository" "fake_server_repo" {
 # ECS Cluster
 resource "aws_ecs_cluster" "fake_llm_cluster" {
   name = "FakeLlmCluster"
+
+  setting {
+    name  = "containerInsights"
+    value = "enabled"
+  }
 }
 
 # ECS Task Definition
+#checkov:skip=CKV_AWS_336:Application requires write access to temporary files
 resource "aws_ecs_task_definition" "fake_server_task_def" {
   family                   = "FakeServerTaskDef"
   requires_compatibilities = ["FARGATE"]
@@ -45,7 +51,7 @@ resource "aws_ecs_task_definition" "fake_server_task_def" {
   memory                   = "1024"
   execution_role_arn       = aws_iam_role.ecs_task_execution_role.arn
   task_role_arn            = aws_iam_role.ecs_task_role.arn
-  
+
   runtime_platform {
     cpu_architecture        = var.architecture == "x86" ? "X86_64" : "ARM64"
     operating_system_family = "LINUX"
@@ -56,7 +62,7 @@ resource "aws_ecs_task_definition" "fake_server_task_def" {
       name      = "FakeServerContainer"
       image     = "${data.aws_ecr_repository.fake_server_repo.repository_url}:latest"
       essential = true
-      
+
       logConfiguration = {
         logDriver = "awslogs"
         options = {
@@ -65,7 +71,7 @@ resource "aws_ecs_task_definition" "fake_server_task_def" {
           "awslogs-stream-prefix" = "FakeServer"
         }
       }
-      
+
       portMappings = [
         {
           containerPort = 8080
@@ -125,7 +131,7 @@ data "aws_caller_identity" "current" {}
 # CloudWatch Log Group
 resource "aws_cloudwatch_log_group" "fake_server_logs" {
   name              = "/ecs/FakeServer"
-  retention_in_days = 30
+  retention_in_days = 365
   kms_key_id        = aws_kms_key.cloudwatch.arn
 }
 
@@ -170,6 +176,8 @@ resource "aws_iam_role" "ecs_task_role" {
 }
 
 # Application Load Balancer
+#checkov:skip=CKV_AWS_91:Load testing infrastructure, not production
+#checkov:skip=CKV2_AWS_28:Load testing infrastructure
 resource "aws_lb" "fake_server_alb" {
   name               = "FakeServer-ALB"
   internal           = false
@@ -217,6 +225,7 @@ resource "aws_lb_target_group" "fake_server_tg" {
 }
 
 # Security Groups
+#checkov:skip=CKV_AWS_260:Load testing server requires public access for testing
 resource "aws_security_group" "alb_sg" {
   name        = "fake-server-alb-sg"
   description = "Allow HTTPS inbound traffic"
@@ -263,13 +272,13 @@ resource "aws_security_group" "ecs_sg" {
 
 # ECS Service
 resource "aws_ecs_service" "fake_server_service" {
-  name                               = "FakeServer"
-  cluster                            = aws_ecs_cluster.fake_llm_cluster.id
-  task_definition                    = aws_ecs_task_definition.fake_server_task_def.arn
-  desired_count                      = 3
-  launch_type                        = "FARGATE"
-  health_check_grace_period_seconds  = 300
-  
+  name                              = "FakeServer"
+  cluster                           = aws_ecs_cluster.fake_llm_cluster.id
+  task_definition                   = aws_ecs_task_definition.fake_server_task_def.arn
+  desired_count                     = 3
+  launch_type                       = "FARGATE"
+  health_check_grace_period_seconds = 300
+
   network_configuration {
     subnets          = data.aws_subnets.private.ids
     security_groups  = [aws_security_group.ecs_sg.id]

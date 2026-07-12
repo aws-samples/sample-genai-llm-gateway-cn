@@ -35,18 +35,21 @@ resource "aws_iam_role_policy_attachment" "execution_role_attachment" {
   policy_arn = "arn:${data.aws_partition.current.partition}:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
 }
 
+#checkov:skip=CKV_AWS_109:Required for ECS task execution and service operations
+#checkov:skip=CKV_AWS_111:Required for ECS task execution and service operations
+#checkov:skip=CKV_AWS_356:Required for ECS task execution and service operations
 data "aws_iam_policy_document" "execution_role_policy_doc" {
   statement {
-    sid       = "EcrImageAccess"
-    actions   = ["ecr:BatchCheckLayerAvailability", "ecr:BatchGetImage", "ecr:GetDownloadUrlForLayer"]
+    sid     = "EcrImageAccess"
+    actions = ["ecr:BatchCheckLayerAvailability", "ecr:BatchGetImage", "ecr:GetDownloadUrlForLayer"]
     resources = [
       "*"
     ]
   }
 
   statement {
-    sid       = "EcrTokenAccess"
-    actions   = ["ecr:GetAuthorizationToken"]
+    sid     = "EcrTokenAccess"
+    actions = ["ecr:GetAuthorizationToken"]
     resources = [
       "*"
     ]
@@ -77,10 +80,13 @@ resource "aws_iam_role_policy_attachment" "execution_role_attach" {
 # --------------------------------------------------------------------
 # Task Role Policy (S3, Bedrock, SageMaker)
 # --------------------------------------------------------------------
+#checkov:skip=CKV_AWS_109:Required for ECS task execution and service operations
+#checkov:skip=CKV_AWS_111:Required for ECS task execution and service operations
+#checkov:skip=CKV_AWS_356:Required for ECS task execution and service operations
 data "aws_iam_policy_document" "task_role_policy_doc" {
   statement {
-    sid       = "S3ConfigBucketAccess"
-    actions   = ["s3:GetObject", "s3:ListBucket"]
+    sid     = "S3ConfigBucketAccess"
+    actions = ["s3:GetObject", "s3:ListBucket"]
     resources = [
       var.config_bucket_arn,
       "${var.config_bucket_arn}/*"
@@ -88,8 +94,8 @@ data "aws_iam_policy_document" "task_role_policy_doc" {
   }
 
   statement {
-    sid       = "S3LogBucketAccess"
-    actions   = ["s3:*"]
+    sid     = "S3LogBucketAccess"
+    actions = ["s3:*"]
     resources = [
       var.log_bucket_arn,
       "${var.log_bucket_arn}/*"

@@ -13,7 +13,7 @@ locals {
 
 locals {
   creating_new_vpc = length(trimspace(var.vpc_id)) == 0
-  final_vpc_id = local.creating_new_vpc ? aws_vpc.new[0].id : data.aws_vpc.existing[0].id
+  final_vpc_id     = local.creating_new_vpc ? aws_vpc.new[0].id : data.aws_vpc.existing[0].id
 }
 
 # First get all subnets in the VPC with auto-assign public IP enabled
@@ -22,7 +22,7 @@ data "aws_subnets" "public_ip_subnets" {
     name   = "vpc-id"
     values = [var.vpc_id]
   }
-  
+
   filter {
     name   = "map-public-ip-on-launch"
     values = ["true"]
@@ -41,7 +41,7 @@ data "aws_subnets" "private_ip_subnets" {
     name   = "vpc-id"
     values = [var.vpc_id]
   }
-  
+
   filter {
     name   = "map-public-ip-on-launch"
     values = ["false"]
@@ -68,9 +68,9 @@ locals {
     for subnet_id, rt in data.aws_route_table.subnet_route_tables : subnet_id
     if length([
       for route in rt.routes : route
-      if route.gateway_id != null && 
-         can(regex("^igw-", route.gateway_id)) && 
-         route.cidr_block == "0.0.0.0/0"
+      if route.gateway_id != null &&
+      can(regex("^igw-", route.gateway_id)) &&
+      route.cidr_block == "0.0.0.0/0"
     ]) > 0
   ]
 
@@ -78,9 +78,9 @@ locals {
     for subnet_id, rt in data.aws_route_table.private_subnet_route_tables : subnet_id
     if length([
       for route in rt.routes : route
-      if route.gateway_id != null && 
-        can(regex("^igw-", route.gateway_id)) && 
-        route.cidr_block == "0.0.0.0/0"
+      if route.gateway_id != null &&
+      can(regex("^igw-", route.gateway_id)) &&
+      route.cidr_block == "0.0.0.0/0"
     ]) == 0
   ]
 
@@ -108,7 +108,7 @@ locals {
   # If we’re using an existing VPC, fetch ALL route table IDs.
   # Otherwise, just pick the new route tables from our resources.
   s3_gateway_route_table_ids = local.creating_new_vpc ? [aws_route_table.public[0].id, local.private_route_table.id] : data.aws_route_tables.existing_vpc_all[0].ids
-  private_route_table = local.creating_new_vpc ? (local.nat_gateway_count == 1 ? aws_route_table.private_with_nat[0] : aws_route_table.private_isolated[0]) : (null)
+  private_route_table        = local.creating_new_vpc ? (local.nat_gateway_count == 1 ? aws_route_table.private_with_nat[0] : aws_route_table.private_isolated[0]) : (null)
 
 }
 
@@ -120,13 +120,13 @@ data "aws_vpc_endpoint_service" "bedrock_agent" {
 }
 
 data "aws_subnet" "chosen_subnets" {
-  count  = length(local.chosen_subnet_ids)
-  id     = local.chosen_subnet_ids[count.index]
+  count = length(local.chosen_subnet_ids)
+  id    = local.chosen_subnet_ids[count.index]
 }
 
 locals {
   # A map from subnet_id => availability_zone
-  subnet_az_map = { 
+  subnet_az_map = {
     for idx, s in data.aws_subnet.chosen_subnets :
     s.id => s.availability_zone
   }
@@ -140,14 +140,14 @@ locals {
 locals {
   is_china = startswith(data.aws_region.current.name, "cn-")
   # Services that use cn.com.amazonaws prefix in China
-  ecr_api_service     = local.is_china ? "cn.com.amazonaws.${data.aws_region.current.name}.ecr.api" : "com.amazonaws.${data.aws_region.current.name}.ecr.api"
-  ecr_dkr_service     = local.is_china ? "cn.com.amazonaws.${data.aws_region.current.name}.ecr.dkr" : "com.amazonaws.${data.aws_region.current.name}.ecr.dkr"
-  sts_service         = local.is_china ? "cn.com.amazonaws.${data.aws_region.current.name}.sts" : "com.amazonaws.${data.aws_region.current.name}.sts"
-  sagemaker_service   = local.is_china ? "cn.com.amazonaws.${data.aws_region.current.name}.sagemaker.runtime" : "com.amazonaws.${data.aws_region.current.name}.sagemaker.runtime"
+  ecr_api_service   = local.is_china ? "cn.com.amazonaws.${data.aws_region.current.name}.ecr.api" : "com.amazonaws.${data.aws_region.current.name}.ecr.api"
+  ecr_dkr_service   = local.is_china ? "cn.com.amazonaws.${data.aws_region.current.name}.ecr.dkr" : "com.amazonaws.${data.aws_region.current.name}.ecr.dkr"
+  sts_service       = local.is_china ? "cn.com.amazonaws.${data.aws_region.current.name}.sts" : "com.amazonaws.${data.aws_region.current.name}.sts"
+  sagemaker_service = local.is_china ? "cn.com.amazonaws.${data.aws_region.current.name}.sagemaker.runtime" : "com.amazonaws.${data.aws_region.current.name}.sagemaker.runtime"
   # These use standard com.amazonaws prefix in both
-  s3_service          = "com.amazonaws.${data.aws_region.current.name}.s3"
-  secretsmanager_svc  = "com.amazonaws.${data.aws_region.current.name}.secretsmanager"
-  logs_service        = "com.amazonaws.${data.aws_region.current.name}.logs"
+  s3_service         = "com.amazonaws.${data.aws_region.current.name}.s3"
+  secretsmanager_svc = "com.amazonaws.${data.aws_region.current.name}.secretsmanager"
+  logs_service       = "com.amazonaws.${data.aws_region.current.name}.logs"
 }
 
 locals {
@@ -155,7 +155,7 @@ locals {
   # for endpoints in general. We filter them down to only those whose AZ
   # is in the service's list of availability_zones.
   bedrock_agent_compatible_subnets = local.bedrock_available ? [
-    for subnet_id in local.chosen_subnet_ids : subnet_id 
+    for subnet_id in local.chosen_subnet_ids : subnet_id
     if contains(data.aws_vpc_endpoint_service.bedrock_agent[0].availability_zones, local.subnet_az_map[subnet_id])
   ] : []
 }

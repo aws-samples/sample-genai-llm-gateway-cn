@@ -99,7 +99,7 @@ if [ -n "${PIP_INDEX_URL:-}" ]; then
   BUILD_ARGS="$BUILD_ARGS --build-arg PIP_INDEX_URL=${PIP_INDEX_URL}"
 fi
 
-docker build --platform "$DOCKER_ARCH" $BUILD_ARGS -t "$APP_NAME:${LITELLM_VERSION}" .
+docker build --platform "$DOCKER_ARCH" "$BUILD_ARGS" -t "$APP_NAME:${LITELLM_VERSION}" .
 echo "Tagging image with ${APP_NAME}:${LITELLM_VERSION}"
 docker tag "$APP_NAME:${LITELLM_VERSION}" "$ECR_DOMAIN/$APP_NAME:${LITELLM_VERSION}"
 docker push "$ECR_DOMAIN/$APP_NAME:${LITELLM_VERSION}"

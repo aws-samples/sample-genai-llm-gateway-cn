@@ -1,6 +1,6 @@
 
 data "aws_route53_zone" "selected" {
-  name = var.hosted_zone_name
+  name         = var.hosted_zone_name
   private_zone = var.public_load_balancer ? false : true
 }
 
@@ -8,7 +8,7 @@ data "aws_route53_zone" "selected" {
 # Create the A record
 resource "aws_route53_record" "litellm" {
   zone_id = data.aws_route53_zone.selected.zone_id
-  name    = var.record_name  # e.g., "litellm.mirodrr.people.aws.dev"
+  name    = var.record_name # e.g., "litellm.mirodrr.people.aws.dev"
   type    = "A"
 
   alias {

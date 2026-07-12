@@ -262,28 +262,28 @@ variable "architecture" {
 }
 
 variable "disable_outbound_network_access" {
-    description = "Whether to disable outbound network access for the EKS Cluster"
-    type = bool
+  description = "Whether to disable outbound network access for the EKS Cluster"
+  type        = bool
 }
 
 variable "desired_capacity" {
   description = "Desired Capacity on the node group and deployment"
-  type = number
+  type        = number
 }
 
 variable "min_capacity" {
   description = "Min Capacity on the node group"
-  type = number
+  type        = number
 }
 
 variable "max_capacity" {
   description = "Max Capacity on the node group"
-  type = number
+  type        = number
 }
 
 variable "public_load_balancer" {
   description = "whether the load balancer is public"
-  type = bool
+  type        = bool
 }
 
 variable "allowed_cidrs" {
@@ -294,27 +294,27 @@ variable "allowed_cidrs" {
 
 variable "master_and_salt_key_secret_arn" {
   description = "ARN of secret with master and salt key"
-  type = string
+  type        = string
 }
 
 variable "main_db_secret_arn" {
   description = "ARN of secret for main rds db"
-  type = string
+  type        = string
 }
 
 variable "vcpus" {
   description = "Number of ECS vcpus"
-  type = number
+  type        = number
 }
 
 variable "cpu_target_utilization_percent" {
   description = "CPU target utilization percent for autoscale"
-  type = number
+  type        = number
 }
 
 variable "memory_target_utilization_percent" {
   description = "Memory target utilization percent for autoscale"
-  type = number
+  type        = number
 }
 
 variable "private_subnets" {
@@ -334,27 +334,27 @@ variable "private_subnets_cidr_blocks" {
 }
 
 variable "disable_swagger_page" {
-  type    = bool
+  type        = bool
   description = "Whether to disable the swagger page or not"
 }
 
 variable "disable_admin_ui" {
-  type    = bool
+  type        = bool
   description = "Whether to disable the admin UI or not"
 }
 
 variable "langfuse_public_key" {
-  type    = string
+  type        = string
   description = "the public key of your langfuse deployment"
 }
 
 variable "langfuse_secret_key" {
-  type    = string
+  type        = string
   description = "the secret key of your langfuse deployment"
 }
 
 variable "langfuse_host" {
-  type    = string
+  type        = string
   description = "the hostname of your langfuse deployment."
 }
 

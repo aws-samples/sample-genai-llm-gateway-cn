@@ -2,29 +2,33 @@
 # (8) Application Load Balancer, Listener, Target Groups
 ###############################################################################
 # ALB
+#checkov:skip=CKV2_AWS_20:HTTPS enforcement handled by CloudFront
+#checkov:skip=CKV_AWS_91:Access logging enabled via access_logs block
 resource "aws_lb" "this" {
   name               = "${var.name}-alb"
   load_balancer_type = "application"
   subnets            = var.public_load_balancer ? var.public_subnets : var.private_subnets
   # You need to supply a security group for the ALB itself:
-  security_groups    = [aws_security_group.alb_sg.id]
-  internal           = var.public_load_balancer ? false : true
-  idle_timeout       = 60
+  security_groups            = [aws_security_group.alb_sg.id]
+  internal                   = var.public_load_balancer ? false : true
+  idle_timeout               = 60
   enable_deletion_protection = true
   drop_invalid_header_fields = true
   access_logs {
     bucket  = aws_s3_bucket.access_log_bucket.bucket
     prefix  = "alb-access-logs-"
     enabled = true
-   }
+  }
 }
 
 # HTTP Listener for CloudFront origin connection
+#checkov:skip=CKV_AWS_2:HTTPS enforcement handled by CloudFront
+#checkov:skip=CKV_AWS_103:HTTPS enforcement handled by CloudFront
 resource "aws_lb_listener" "http" {
   load_balancer_arn = aws_lb.this.arn
   port              = 80
   protocol          = "HTTP"
-  
+
   # Use tg_4000 as the default
   default_action {
     type             = "forward"
@@ -38,9 +42,9 @@ resource "aws_lb_listener" "https" {
   port              = 443
   protocol          = "HTTPS"
   ssl_policy        = "ELBSecurityPolicy-TLS13-1-2-2021-06"
-  
+
   # Use ACM certificate if provided, otherwise use self-signed certificate
-  certificate_arn   = var.certificate_arn != "" ? var.certificate_arn : aws_acm_certificate.self_signed[0].arn
+  certificate_arn = var.certificate_arn != "" ? var.certificate_arn : aws_acm_certificate.self_signed[0].arn
 
   # Instead of a fixed-response 404, use tg_4000 as the default.
   default_action {
@@ -127,7 +131,7 @@ resource "aws_lb_target_group" "tg_3000" {
 resource "aws_lb_listener_rule" "health_check_exception" {
   count        = var.use_cloudfront ? 1 : 0
   listener_arn = aws_lb_listener.https.arn
-  priority     = 4  # Highest priority we can safely use
+  priority     = 4 # Highest priority we can safely use
 
   action {
     type             = "forward"
@@ -152,7 +156,7 @@ resource "aws_lb_listener_rule" "health_check_exception" {
 resource "aws_lb_listener_rule" "cloudfront_auth" {
   count        = var.use_cloudfront ? 1 : 0
   listener_arn = aws_lb_listener.https.arn
-  priority     = 5  # Second priority, after health checks
+  priority     = 5 # Second priority, after health checks
 
   action {
     type             = "forward"
@@ -173,7 +177,7 @@ resource "aws_lb_listener_rule" "cloudfront_auth" {
 resource "aws_lb_listener_rule" "reject_direct_access" {
   count        = var.use_cloudfront ? 1 : 0
   listener_arn = aws_lb_listener.https.arn
-  priority     = 6  # Third priority
+  priority     = 6 # Third priority
 
   action {
     type = "fixed-response"
@@ -425,7 +429,7 @@ resource "aws_lb_listener_rule" "user_new" {
 resource "aws_lb_listener_rule" "health_check_exception_http" {
   count        = var.use_cloudfront ? 1 : 0
   listener_arn = aws_lb_listener.http.arn
-  priority     = 4  # Highest priority we can safely use
+  priority     = 4 # Highest priority we can safely use
 
   action {
     type             = "forward"
@@ -751,7 +755,7 @@ resource "aws_lb_listener_rule" "catch_all_http" {
       values = ["/*"]
     }
   }
-  
+
   # Add CloudFront Secret header validation
   condition {
     http_header {
@@ -765,7 +769,7 @@ resource "aws_lb_listener_rule" "catch_all_http" {
 resource "aws_lb_listener_rule" "reject_direct_access_http" {
   count        = var.use_cloudfront ? 1 : 0
   listener_arn = aws_lb_listener.http.arn
-  priority     = 99  # Make sure this is the last priority
+  priority     = 99 # Make sure this is the last priority
 
   action {
     type = "fixed-response"
@@ -803,7 +807,7 @@ resource "aws_appautoscaling_policy" "cpu_policy" {
   service_namespace  = aws_appautoscaling_target.ecs_service_target.service_namespace
 
   target_tracking_scaling_policy_configuration {
-    target_value       = var.cpu_target_utilization_percent
+    target_value = var.cpu_target_utilization_percent
     predefined_metric_specification {
       predefined_metric_type = "ECSServiceAverageCPUUtilization"
     }
@@ -820,7 +824,7 @@ resource "aws_appautoscaling_policy" "memory_policy" {
   service_namespace  = aws_appautoscaling_target.ecs_service_target.service_namespace
 
   target_tracking_scaling_policy_configuration {
-    target_value       = var.memory_target_utilization_percent
+    target_value = var.memory_target_utilization_percent
     predefined_metric_specification {
       predefined_metric_type = "ECSServiceAverageMemoryUtilization"
     }

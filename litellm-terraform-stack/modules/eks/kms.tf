@@ -1,5 +1,5 @@
 resource "aws_kms_key" "eks_secrets" {
-count = var.create_cluster ? 1 : 0
+  count                   = var.create_cluster ? 1 : 0
   description             = "KMS key for encrypting EKS Secrets"
   enable_key_rotation     = true
   deletion_window_in_days = 30
@@ -12,8 +12,8 @@ count = var.create_cluster ? 1 : 0
     Id      = "key-default-1"
     Statement = [
       {
-        Sid      = "Enable IAM User Permissions"
-        Effect   = "Allow"
+        Sid    = "Enable IAM User Permissions"
+        Effect = "Allow"
         Principal = {
           AWS = "arn:${data.aws_partition.current.partition}:iam::${data.aws_caller_identity.current.account_id}:root"
         }
