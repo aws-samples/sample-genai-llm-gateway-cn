@@ -19,8 +19,8 @@ resource "time_sleep" "wait_for_rbac_propagation_before_creating_secrets" {
   create_duration = "5s"
 }
 
-#checkov:skip=CKV_K8S_21:Namespace configured via Helm release values
 resource "kubernetes_secret" "litellm_api_keys" {
+  #checkov:skip=CKV_K8S_21:Namespace configured via Helm release values
   metadata {
     name = "litellm-api-keys"
   }
@@ -60,8 +60,8 @@ resource "kubernetes_secret" "litellm_api_keys" {
   ]
 }
 
-#checkov:skip=CKV_K8S_21:Namespace configured via Helm release values
 resource "kubernetes_secret" "middleware_secrets" {
+  #checkov:skip=CKV_K8S_21:Namespace configured via Helm release values
   metadata {
     name = "middleware-secrets"
   }
@@ -79,18 +79,18 @@ resource "kubernetes_secret" "middleware_secrets" {
 }
 
 # Deployment
-#checkov:skip=CKV_K8S_10:Resource limits configured at pod level via Helm values
-#checkov:skip=CKV_K8S_11:Resource limits configured at pod level via Helm values
-#checkov:skip=CKV_K8S_12:Resource limits configured at pod level via Helm values
-#checkov:skip=CKV_K8S_13:Resource limits configured at pod level via Helm values
-#checkov:skip=CKV_K8S_14:Image tag managed by deployment pipeline
-#checkov:skip=CKV_K8S_43:Image tag managed by deployment pipeline
-#checkov:skip=CKV_K8S_21:Namespace configured via Helm release values
-#checkov:skip=CKV_K8S_28:Security context configured via Helm chart values
-#checkov:skip=CKV_K8S_29:Security context configured via Helm chart values
-#checkov:skip=CKV_K8S_30:Security context configured via Helm chart values
-#checkov:skip=CKV_K8S_35:Security context configured via Helm chart values
 resource "kubernetes_deployment" "litellm" {
+  #checkov:skip=CKV_K8S_10:Resource limits configured at pod level via Helm values
+  #checkov:skip=CKV_K8S_11:Resource limits configured at pod level via Helm values
+  #checkov:skip=CKV_K8S_12:Resource limits configured at pod level via Helm values
+  #checkov:skip=CKV_K8S_13:Resource limits configured at pod level via Helm values
+  #checkov:skip=CKV_K8S_14:Image tag managed by deployment pipeline
+  #checkov:skip=CKV_K8S_43:Image tag managed by deployment pipeline
+  #checkov:skip=CKV_K8S_21:Namespace configured via Helm release values
+  #checkov:skip=CKV_K8S_28:Security context configured via Helm chart values
+  #checkov:skip=CKV_K8S_29:Security context configured via Helm chart values
+  #checkov:skip=CKV_K8S_30:Security context configured via Helm chart values
+  #checkov:skip=CKV_K8S_35:Security context configured via Helm chart values
   metadata {
     name = "litellm-deployment"
   }
@@ -288,8 +288,8 @@ resource "kubernetes_deployment" "litellm" {
 }
 
 # Ingress
-#checkov:skip=CKV_K8S_21:Namespace configured via Helm release values
 resource "kubernetes_ingress_v1" "litellm" {
+  #checkov:skip=CKV_K8S_21:Namespace configured via Helm release values
   wait_for_load_balancer = true
   metadata {
     name = "litellm-ingress"
@@ -444,8 +444,8 @@ resource "kubernetes_ingress_v1" "litellm" {
 }
 
 # Service
-#checkov:skip=CKV_K8S_21:Namespace configured via Helm release values
 resource "kubernetes_service" "litellm" {
+  #checkov:skip=CKV_K8S_21:Namespace configured via Helm release values
   metadata {
     name = "litellm-service"
   }
@@ -480,8 +480,8 @@ resource "kubernetes_service" "litellm" {
 }
 
 # Add AWS Load Balancer Controller
-#checkov:skip=CKV_TF_1:Module version pinned by version constraint
 module "aws_load_balancer_controller_irsa_role" {
+  #checkov:skip=CKV_TF_1:Module version pinned by version constraint
   source  = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
   version = "5.52.2"
 

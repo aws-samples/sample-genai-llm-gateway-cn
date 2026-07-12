@@ -42,8 +42,8 @@ resource "aws_ecs_cluster" "fake_llm_cluster" {
 }
 
 # ECS Task Definition
-#checkov:skip=CKV_AWS_336:Application requires write access to temporary files
 resource "aws_ecs_task_definition" "fake_server_task_def" {
+  #checkov:skip=CKV_AWS_336:Application requires write access to temporary files
   family                   = "FakeServerTaskDef"
   requires_compatibilities = ["FARGATE"]
   network_mode             = "awsvpc"
@@ -176,9 +176,9 @@ resource "aws_iam_role" "ecs_task_role" {
 }
 
 # Application Load Balancer
-#checkov:skip=CKV_AWS_91:Load testing infrastructure, not production
-#checkov:skip=CKV2_AWS_28:Load testing infrastructure
 resource "aws_lb" "fake_server_alb" {
+  #checkov:skip=CKV_AWS_91:Load testing infrastructure, not production
+  #checkov:skip=CKV2_AWS_28:Load testing infrastructure
   name               = "FakeServer-ALB"
   internal           = false
   load_balancer_type = "application"
@@ -225,8 +225,8 @@ resource "aws_lb_target_group" "fake_server_tg" {
 }
 
 # Security Groups
-#checkov:skip=CKV_AWS_260:Load testing server requires public access for testing
 resource "aws_security_group" "alb_sg" {
+  #checkov:skip=CKV_AWS_260:Load testing server requires public access for testing
   name        = "fake-server-alb-sg"
   description = "Allow HTTPS inbound traffic"
   vpc_id      = var.vpc_id

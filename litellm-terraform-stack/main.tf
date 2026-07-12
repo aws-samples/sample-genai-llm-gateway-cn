@@ -1,8 +1,8 @@
 #--------------------------------------------------------------
 # Adding guidance solution ID via AWS CloudFormation resource
 #--------------------------------------------------------------
-#checkov:skip=CKV_AWS_124:Managed by Terraform, not CloudFormation
 resource "aws_cloudformation_stack" "guidance_deployment_metrics" {
+  #checkov:skip=CKV_AWS_124:Managed by Terraform, not CloudFormation
   name          = "tracking-stack"
   template_body = <<STACK
     {

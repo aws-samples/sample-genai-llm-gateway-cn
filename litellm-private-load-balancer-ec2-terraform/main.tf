@@ -37,8 +37,8 @@ data "aws_ami" "amazon_linux" {
 }
 
 # Create Security Group for the Linux instance
-#checkov:skip=CKV_AWS_24:SSH CIDR configurable via variable
 resource "aws_security_group" "linux_sg" {
+  #checkov:skip=CKV_AWS_24:SSH CIDR configurable via variable
   name        = "LinuxInstanceSG"
   description = "Security group for Linux EC2 instance"
   vpc_id      = data.aws_vpc.imported_vpc.id

@@ -117,8 +117,8 @@ resource "aws_iam_role" "eks_cluster" {
   })
 }
 
-#checkov:skip=CKV_AWS_339:EKS version managed by cluster upgrade lifecycle
 resource "aws_eks_cluster" "this" {
+  #checkov:skip=CKV_AWS_339:EKS version managed by cluster upgrade lifecycle
   count = var.create_cluster ? 1 : 0
 
   access_config {

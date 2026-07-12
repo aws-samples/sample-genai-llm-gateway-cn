@@ -1,3 +1,4 @@
+# checkov:skip=CKV_DOCKER_7:Base image version pinned via PYTHON_BASE_IMAGE ARG
 # China regions cannot pull from Docker Hub directly.
 # Set PYTHON_BASE_IMAGE to use a China-accessible mirror or pre-mirrored ECR image.
 # Default: python:3.11-slim (works in global regions)

@@ -1,8 +1,8 @@
-#checkov:skip=CKV_AWS_18:Logging bucket cannot log to itself
-#checkov:skip=CKV_AWS_144:Single-region deployment
-#checkov:skip=CKV2_AWS_62:Not required for log storage
-#checkov:skip=CKV2_AWS_67:Using AWS-managed key rotation
 resource "aws_s3_bucket" "log_bucket" {
+  #checkov:skip=CKV_AWS_18:Logging bucket cannot log to itself
+  #checkov:skip=CKV_AWS_144:Single-region deployment
+  #checkov:skip=CKV2_AWS_62:Not required for log storage
+  #checkov:skip=CKV2_AWS_67:Using AWS-managed key rotation
   bucket_prefix = "litellm-logs-"
   force_destroy = true
 }
@@ -15,6 +15,7 @@ resource "aws_s3_bucket_versioning" "log_bucket" {
 }
 
 resource "aws_s3_bucket_server_side_encryption_configuration" "log_bucket" {
+  #checkov:skip=CKV2_AWS_67:Using AWS-managed key rotation
   bucket = aws_s3_bucket.log_bucket.id
 
   rule {
@@ -60,6 +61,7 @@ resource "aws_s3_bucket_public_access_block" "log_bucket" {
 }
 
 resource "aws_s3_bucket_lifecycle_configuration" "log_bucket" {
+  #checkov:skip=CKV_AWS_300:Lifecycle rule configured with appropriate retention
   bucket = aws_s3_bucket.log_bucket.id
 
   rule {

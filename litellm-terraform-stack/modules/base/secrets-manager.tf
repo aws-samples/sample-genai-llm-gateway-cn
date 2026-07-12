@@ -14,8 +14,8 @@ resource "random_password" "litellm_salt" {
 
 
 # Create a secret (the "shell" or "container" for the key)
-#checkov:skip=CKV2_AWS_57:Secret rotation managed by application deployment pipeline
 resource "aws_secretsmanager_secret" "litellm_master_salt" {
+  #checkov:skip=CKV2_AWS_57:Secret rotation managed by application deployment pipeline
   name_prefix             = "LiteLLMMasterSalt-"
   recovery_window_in_days = 0
   kms_key_id              = aws_kms_key.secrets.arn
@@ -46,8 +46,8 @@ locals {
   litellm_db_password = jsondecode(aws_secretsmanager_secret_version.db_secret_main_version.secret_string).password
 }
 
-#checkov:skip=CKV2_AWS_57:Secret rotation managed by application deployment pipeline
 resource "aws_secretsmanager_secret" "db_url_secret" {
+  #checkov:skip=CKV2_AWS_57:Secret rotation managed by application deployment pipeline
   name_prefix             = "DBUrlSecret-"
   recovery_window_in_days = 0
   kms_key_id              = aws_kms_key.secrets.arn

@@ -1,8 +1,8 @@
 ###############################################################################
 # WAFv2 Web ACL
 ###############################################################################
-#checkov:skip=CKV2_AWS_31:WAF logging configured separately
 resource "aws_wafv2_web_acl" "litellm_waf" {
+  #checkov:skip=CKV2_AWS_31:WAF logging configured separately
   name        = "LiteLLMWAF"
   description = "WAF for LiteLLM"
   scope       = "REGIONAL" # or CLOUDFRONT

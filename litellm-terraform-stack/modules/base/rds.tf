@@ -7,8 +7,8 @@ resource "random_password" "db_password_main" {
   special = false
 }
 
-#checkov:skip=CKV2_AWS_57:Rotation configured via application deployment
 resource "aws_secretsmanager_secret" "db_secret_main" {
+  #checkov:skip=CKV2_AWS_57:Rotation configured via application deployment
   name_prefix             = "${var.name}-DBSecret-"
   recovery_window_in_days = 0
   kms_key_id              = aws_kms_key.secrets.arn
@@ -69,8 +69,8 @@ resource "aws_db_parameter_group" "example_pg" {
 }
 
 # Database #1: litellm
-#checkov:skip=CKV_AWS_354:Performance Insights KMS key uses AWS-managed key
 resource "aws_db_instance" "database" {
+  #checkov:skip=CKV_AWS_354:Performance Insights KMS key uses AWS-managed key
   identifier                          = "${var.name}-litellm-db"
   engine                              = "postgres"
   engine_version                      = "15" # or "15.x"

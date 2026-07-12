@@ -2,9 +2,9 @@
 # (8) Application Load Balancer, Listener, Target Groups
 ###############################################################################
 # ALB
-#checkov:skip=CKV2_AWS_20:HTTPS enforcement handled by CloudFront
-#checkov:skip=CKV_AWS_91:Access logging enabled via access_logs block
 resource "aws_lb" "this" {
+  #checkov:skip=CKV2_AWS_20:HTTPS enforcement handled by CloudFront
+  #checkov:skip=CKV_AWS_91:Access logging enabled via access_logs block
   name               = "${var.name}-alb"
   load_balancer_type = "application"
   subnets            = var.public_load_balancer ? var.public_subnets : var.private_subnets
@@ -22,9 +22,9 @@ resource "aws_lb" "this" {
 }
 
 # HTTP Listener for CloudFront origin connection
-#checkov:skip=CKV_AWS_2:HTTPS enforcement handled by CloudFront
-#checkov:skip=CKV_AWS_103:HTTPS enforcement handled by CloudFront
 resource "aws_lb_listener" "http" {
+  #checkov:skip=CKV_AWS_2:HTTPS enforcement handled by CloudFront
+  #checkov:skip=CKV_AWS_103:HTTPS enforcement handled by CloudFront
   load_balancer_arn = aws_lb.this.arn
   port              = 80
   protocol          = "HTTP"

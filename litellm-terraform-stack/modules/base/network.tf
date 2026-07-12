@@ -4,8 +4,8 @@ data "aws_vpc" "existing" {
 }
 
 # We'll expose a local reference to either the existing VPC or a newly created one:
-#checkov:skip=CKV2_AWS_12:Default security group restricted via aws_default_security_group resource
 resource "aws_vpc" "new" {
+  #checkov:skip=CKV2_AWS_12:Default security group restricted via aws_default_security_group resource
   count                = local.creating_new_vpc ? 1 : 0
   cidr_block           = "10.0.0.0/16"
   enable_dns_hostnames = true
@@ -20,8 +20,8 @@ resource "aws_internet_gateway" "this" {
 
 # Create the NAT gateway only if nat_gateway_count = 1 (and we have a new VPC).
 # We'll put it in the first public subnet for simplicity.
-#checkov:skip=CKV2_AWS_19:EIP used by NAT Gateway
 resource "aws_eip" "nat" {
+  #checkov:skip=CKV2_AWS_19:EIP used by NAT Gateway
   count  = (local.creating_new_vpc && local.nat_gateway_count == 1) ? 1 : 0
   domain = "vpc"
 }

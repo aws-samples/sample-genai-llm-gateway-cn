@@ -12,9 +12,9 @@ data "aws_route53_zone" "public_zone" {
   private_zone = false
 }
 
-#checkov:skip=CKV2_AWS_38:DNSSEC not supported for private hosted zones
-#checkov:skip=CKV2_AWS_39:Query logging adds cost, not required for internal resolution
 resource "aws_route53_zone" "new_private_zone" {
+  #checkov:skip=CKV2_AWS_38:DNSSEC not supported for private hosted zones
+  #checkov:skip=CKV2_AWS_39:Query logging adds cost, not required for internal resolution
   //If use_route53 = false or public load balancer, never create private zone
   //If private load balancer, always create private zone if we are creating new vpc
   //If private load balancer, and user brings their own vpc, decide whether to create or import private hosted zone based on "var.create_private_hosted_zone_in_existing_vpc" variable

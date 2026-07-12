@@ -17,13 +17,13 @@ resource "random_password" "cloudfront_secret" {
 }
 
 # CloudFront Distribution
-#checkov:skip=CKV_AWS_68:WAF attached at ALB level
-#checkov:skip=CKV_AWS_86:Logging handled at ALB level
-#checkov:skip=CKV_AWS_310:Single origin architecture for API gateway
-#checkov:skip=CKV2_AWS_32:Response headers managed by application
-#checkov:skip=CKV2_AWS_42:Using default CloudFront certificate
-#checkov:skip=CKV2_AWS_47:WAF rules managed at ALB level
 resource "aws_cloudfront_distribution" "this" {
+  #checkov:skip=CKV_AWS_68:WAF attached at ALB level
+  #checkov:skip=CKV_AWS_86:Logging handled at ALB level
+  #checkov:skip=CKV_AWS_310:Single origin architecture for API gateway
+  #checkov:skip=CKV2_AWS_32:Response headers managed by application
+  #checkov:skip=CKV2_AWS_42:Using default CloudFront certificate
+  #checkov:skip=CKV2_AWS_47:WAF rules managed at ALB level
   count               = var.use_cloudfront ? 1 : 0
   enabled             = true
   is_ipv6_enabled     = true

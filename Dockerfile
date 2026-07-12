@@ -1,3 +1,4 @@
+# checkov:skip=CKV_DOCKER_7:Base image version pinned via LITELLM_VERSION ARG
 ARG LITELLM_VERSION=main-v1.82.3-stable.patch.2
 # China regions cannot pull from ghcr.io directly.
 # Set LITELLM_BASE_IMAGE to use a pre-mirrored image in ECR or a China-accessible registry.

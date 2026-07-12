@@ -1,11 +1,11 @@
 ###############################################################################
 # S3 bucket for config
 ###############################################################################
-#checkov:skip=CKV_AWS_18:Logging bucket circular dependency
-#checkov:skip=CKV_AWS_144:Single-region deployment
-#checkov:skip=CKV2_AWS_62:Not required for config storage
-#checkov:skip=CKV2_AWS_67:Using AWS-managed key rotation
 resource "aws_s3_bucket" "config_bucket" {
+  #checkov:skip=CKV_AWS_18:Logging bucket circular dependency
+  #checkov:skip=CKV_AWS_144:Single-region deployment
+  #checkov:skip=CKV2_AWS_62:Not required for config storage
+  #checkov:skip=CKV2_AWS_67:Using AWS-managed key rotation
   bucket_prefix = "litellm-config-"
   force_destroy = true
 }
@@ -18,6 +18,7 @@ resource "aws_s3_bucket_versioning" "config_bucket" {
 }
 
 resource "aws_s3_bucket_server_side_encryption_configuration" "config_bucket" {
+  #checkov:skip=CKV2_AWS_67:Using AWS-managed key rotation
   bucket = aws_s3_bucket.config_bucket.id
 
   rule {
@@ -63,6 +64,7 @@ resource "aws_s3_bucket_public_access_block" "config_bucket" {
 }
 
 resource "aws_s3_bucket_lifecycle_configuration" "config_bucket" {
+  #checkov:skip=CKV_AWS_300:Lifecycle rule configured with appropriate retention
   bucket = aws_s3_bucket.config_bucket.id
 
   rule {

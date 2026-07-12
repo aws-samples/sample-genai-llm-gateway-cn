@@ -51,8 +51,8 @@ resource "random_password" "redis_password_main" {
   special = false
 }
 
-#checkov:skip=CKV_AWS_191:ElastiCache uses AWS-managed CMK for at-rest encryption
 resource "aws_elasticache_replication_group" "redis" {
+  #checkov:skip=CKV_AWS_191:ElastiCache uses AWS-managed CMK for at-rest encryption
   replication_group_id       = "${var.name}-redis"
   description                = "redis"
   engine                     = "redis"

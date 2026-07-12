@@ -1,5 +1,5 @@
-#checkov:skip=CKV2_AWS_57:Secret rotation managed by application deployment pipeline
 resource "aws_secretsmanager_secret" "litellm_other_secrets" {
+  #checkov:skip=CKV2_AWS_57:Secret rotation managed by application deployment pipeline
   name_prefix             = "LiteLLMApiKeySecret-"
   recovery_window_in_days = 0
   kms_key_id              = var.kms_secrets_key_arn
