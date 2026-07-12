@@ -85,7 +85,7 @@ class TestAPIIntegration:
         if teams is not None:
             payload["teams"] = teams
 
-        response = requests.post(f"{base_url}/user/new", headers=headers, json=payload)
+        response = requests.post(f"{base_url}/user/new", headers=headers, json=payload, timeout=30)
 
         print("\nAPI Response Details:")
         print(f"Status Code: {response.status_code}")
@@ -310,7 +310,7 @@ class TestAPIIntegration:
 
         # Make request to generate new key
         response = requests.post(
-            f"{base_url}/key/generate", headers=headers, json=key_payload
+            f"{base_url}/key/generate", headers=headers, json=key_payload, timeout=30
         )
 
         print("\nKey Generation Response Details:")
@@ -395,7 +395,7 @@ class TestAPIIntegration:
 
     #     # Make request to generate new key
     #     response = requests.post(
-    #         f"{base_url}/key/generate", headers=headers, json=key_payload
+    #         f"{base_url}/key/generate", headers=headers, json=key_payload, timeout=30
     #     )
 
     #     print("\nKey Generation Response Details:")
@@ -423,7 +423,7 @@ class TestAPIIntegration:
     #     key_payload["models"] = [allowed_model]
 
     #     response = requests.post(
-    #         f"{base_url}/key/generate", headers=headers, json=key_payload
+    #         f"{base_url}/key/generate", headers=headers, json=key_payload, timeout=30
     #     )
 
     #     assert response.status_code == 200, (
@@ -470,7 +470,7 @@ class TestAPIIntegration:
 
         # Make request to generate new key
         response = requests.post(
-            f"{base_url}/key/generate", headers=headers, json=key_payload
+            f"{base_url}/key/generate", headers=headers, json=key_payload, timeout=30
         )
 
         print("\nKey Generation Response Details:")
@@ -563,7 +563,7 @@ class TestAPIIntegration:
 
         print("\nGenerating key with attempted higher rate limits...")
         response = requests.post(
-            f"{base_url}/key/generate", headers=headers, json=key_payload
+            f"{base_url}/key/generate", headers=headers, json=key_payload, timeout=30
         )
 
         print("\nKey Generation Response:")
@@ -738,7 +738,7 @@ class TestAPIIntegration:
 
     #     print("\nGenerating key with attempted higher rate limits for user2...")
     #     response = requests.post(
-    #         f"{base_url}/key/generate", headers=headers, json=key_payload
+    #         f"{base_url}/key/generate", headers=headers, json=key_payload, timeout=30
     #     )
 
     #     print("\nKey Generation Response:")
@@ -901,7 +901,7 @@ class TestAPIIntegration:
 
         print("\nAttempting to generate key for user2 using user1's key...")
         response = requests.post(
-            f"{base_url}/key/generate", headers=headers, json=key_payload
+            f"{base_url}/key/generate", headers=headers, json=key_payload, timeout=30
         )
 
         print("\nKey Generation Response Details:")
@@ -941,7 +941,7 @@ class TestAPIIntegration:
 
         print("\nVerifying user2 can still generate their own keys...")
         response = requests.post(
-            f"{base_url}/key/generate", headers=headers, json=key_payload
+            f"{base_url}/key/generate", headers=headers, json=key_payload, timeout=30
         )
 
         assert response.status_code == 200, (
@@ -1010,7 +1010,7 @@ class TestAPIIntegration:
         additional_key_response = requests.post(
             f"{base_url}/key/generate",
             headers=user2_headers,
-            json=additional_key_payload,
+            json=additional_key_payload, timeout=30
         )
 
         assert (
@@ -1028,7 +1028,7 @@ class TestAPIIntegration:
 
         print("\nAttempting to delete user2's keys using user1's authorization...")
         response = requests.post(
-            f"{base_url}/key/delete", headers=user1_headers, json=deletion_payload
+            f"{base_url}/key/delete", headers=user1_headers, json=deletion_payload, timeout=30
         )
 
         print("\nDeletion Attempt Response Details:")
@@ -1086,7 +1086,7 @@ class TestAPIIntegration:
         user2_deletion_response = requests.post(
             f"{base_url}/key/delete",
             headers=user2_headers,
-            json={"keys": [user2_additional_key]},
+            json={"keys": [user2_additional_key]}, timeout=30
         )
 
         assert user2_deletion_response.status_code == 200, (
@@ -1141,7 +1141,7 @@ class TestAPIIntegration:
 
         print("\nGenerating additional key for user1...")
         key_response = requests.post(
-            f"{base_url}/key/generate", headers=headers, json=key_payload
+            f"{base_url}/key/generate", headers=headers, json=key_payload, timeout=30
         )
 
         assert (
@@ -1161,7 +1161,7 @@ class TestAPIIntegration:
 
         print("\nAttempting to update key ownership to user2...")
         update_response = requests.post(
-            f"{base_url}/key/update", headers=headers, json=update_payload
+            f"{base_url}/key/update", headers=headers, json=update_payload, timeout=30
         )
 
         print("\nUpdate Attempt Response Details:")
@@ -1214,7 +1214,7 @@ class TestAPIIntegration:
         user2_update_response = requests.post(
             f"{base_url}/key/update",
             headers=user2_headers,
-            json={"key": user1_additional_key["key"], "metadata": {"test": "update"}},
+            json={"key": user1_additional_key["key"], "metadata": {"test": "update"}}, timeout=30
         )
 
         assert (
@@ -1229,7 +1229,7 @@ class TestAPIIntegration:
         }
 
         legitimate_response = requests.post(
-            f"{base_url}/key/update", headers=headers, json=legitimate_update
+            f"{base_url}/key/update", headers=headers, json=legitimate_update, timeout=30
         )
 
         assert legitimate_response.status_code == 200, (
@@ -1263,7 +1263,7 @@ class TestAPIIntegration:
 
         print("\nCreating test team...")
         team_response = requests.post(
-            f"{base_url}/team/new", headers=headers, json=team_payload
+            f"{base_url}/team/new", headers=headers, json=team_payload, timeout=30
         )
 
         print("\nTeam Creation Response:")
@@ -1391,7 +1391,7 @@ class TestAPIIntegration:
 
         print("\nCreating test team...")
         team_response = requests.post(
-            f"{base_url}/team/new", headers=headers, json=team_payload
+            f"{base_url}/team/new", headers=headers, json=team_payload, timeout=30
         )
 
         print("\nTeam Creation Response:")
@@ -1431,7 +1431,7 @@ class TestAPIIntegration:
 
         print("\nGenerating new key for user...")
         key_response = requests.post(
-            f"{base_url}/key/generate", headers=key_headers, json=key_payload
+            f"{base_url}/key/generate", headers=key_headers, json=key_payload, timeout=30
         )
 
         print("\nKey Generation Response:")

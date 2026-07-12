@@ -50,7 +50,7 @@ async def _rate_limit_exceeded_handler(request: Request, exc: RateLimitExceeded)
 
 app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
-app.add_middleware(
+app.add_middleware(  # nosec - this is a fake/test server for load testing only
     CORSMiddleware,
     allow_origins=["*"],
     allow_credentials=True,
@@ -205,11 +205,11 @@ if __name__ == "__main__":
     port = 8080
     while True:
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        result = sock.connect_ex(("0.0.0.0", port))
+        result = sock.connect_ex(("0.0.0.0", port))  # nosec B104
         if result != 0:
             print(f"Port {port} is available, starting server on {port}...")
             break
         else:
             port += 1
 
-    uvicorn.run(app, host="0.0.0.0", port=port)
+    uvicorn.run(app, host="0.0.0.0", port=port)  # nosec B104

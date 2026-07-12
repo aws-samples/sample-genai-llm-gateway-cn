@@ -2,7 +2,7 @@
 set -aeuo pipefail
 
 aws_region=$(aws ec2 describe-availability-zones --output text --query 'AvailabilityZones[0].[RegionName]')
-echo $aws_region
+echo "$aws_region"
 
 # Check if config.yaml exists
 if [ ! -f "config/config.yaml" ]; then
@@ -117,7 +117,7 @@ if aws s3api head-bucket --bucket "$TERRAFORM_S3_BUCKET_NAME" 2>/dev/null; then
     echo "Terraform Bucket $TERRAFORM_S3_BUCKET_NAME already exists, skipping creation"
 else
     echo "Creating bucket $TERRAFORM_S3_BUCKET_NAME..."
-    aws s3 mb "s3://$TERRAFORM_S3_BUCKET_NAME" --region $aws_region
+    aws s3 mb "s3://$TERRAFORM_S3_BUCKET_NAME" --region "$aws_region"
     echo "Terraform Bucket created successfully"
 fi
 
@@ -143,15 +143,15 @@ else
     fi
 fi
 
-echo "Certificate Arn: " $CERTIFICATE_ARN
-echo "RECORD_NAME: " $RECORD_NAME
+echo "Certificate Arn: " "$CERTIFICATE_ARN"
+echo "RECORD_NAME: " "$RECORD_NAME"
 echo "HOSTED_ZONE_NAME: $HOSTED_ZONE_NAME"
 echo "CREATE_PRIVATE_HOSTED_ZONE_IN_EXISTING_VPC: $CREATE_PRIVATE_HOSTED_ZONE_IN_EXISTING_VPC"
 echo "OKTA_ISSUER: $OKTA_ISSUER"
 echo "OKTA_AUDIENCE: $OKTA_AUDIENCE"
-echo "LiteLLM Version: " $LITELLM_VERSION
-echo "Skipping container build: " $SKIP_BUILD
-echo "Build from source: " $BUILD_FROM_SOURCE
+echo "LiteLLM Version: " "$LITELLM_VERSION"
+echo "Skipping container build: " "$SKIP_BUILD"
+echo "Build from source: " "$BUILD_FROM_SOURCE"
 
 echo "OPENAI_API_KEY: $OPENAI_API_KEY"
 echo "AZURE_OPENAI_API_KEY: $AZURE_OPENAI_API_KEY"
@@ -232,17 +232,17 @@ else
     esac
 fi
 
-echo $ARCH
+echo "$ARCH"
 
 if [ "$SKIP_BUILD" = false ]; then
     echo "Building and pushing docker image..."
-    ./docker-build-and-deploy.sh $APP_NAME $BUILD_FROM_SOURCE $ARCH
+    ./docker-build-and-deploy.sh "$APP_NAME" "$BUILD_FROM_SOURCE" "$ARCH"
 else
     echo "Skipping docker build and deploy step..."
 fi
 
 cd middleware
-./docker-build-and-deploy.sh $MIDDLEWARE_APP_NAME $ARCH
+./docker-build-and-deploy.sh "$MIDDLEWARE_APP_NAME" "$ARCH"
 cd ..
 
 echo "Deploying the log bucket terraform stack..."
@@ -432,10 +432,10 @@ if [ $? -eq 0 ]; then
 
         echo "ServiceURL=$SERVICE_URL" > resources.txt
         aws ecs update-service \
-            --cluster $LITELLM_ECS_CLUSTER \
-            --service $LITELLM_ECS_TASK \
+            --cluster "$LITELLM_ECS_CLUSTER" \
+            --service "$LITELLM_ECS_TASK" \
             --force-new-deployment \
-            --desired-count $DESIRED_CAPACITY \
+            --desired-count "$DESIRED_CAPACITY" \
             --no-cli-pager
     fi
 
@@ -445,8 +445,8 @@ if [ $? -eq 0 ]; then
 
         echo "EKS_DEPLOYMENT_NAME: $EKS_DEPLOYMENT_NAME"
         echo "EKS_CLUSTER_NAME: $EKS_CLUSTER_NAME"
-        aws eks update-kubeconfig --region $aws_region --name $EKS_CLUSTER_NAME
-        kubectl rollout restart deployment $EKS_DEPLOYMENT_NAME
+        aws eks update-kubeconfig --region "$aws_region" --name "$EKS_CLUSTER_NAME"
+        kubectl rollout restart deployment "$EKS_DEPLOYMENT_NAME"
     fi
     
     # Validate CloudFront if enabled

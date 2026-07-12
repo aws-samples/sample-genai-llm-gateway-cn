@@ -23,7 +23,7 @@ else
     fi
     
     # Download yq
-    if wget https://github.com/mikefarah/yq/releases/download/${VERSION}/${BINARY} -O /usr/bin/yq; then
+    if wget "https://github.com/mikefarah/yq/releases/download/${VERSION}/${BINARY}" -O /usr/bin/yq; then
         # Make it executable
         chmod +x /usr/bin/yq
         

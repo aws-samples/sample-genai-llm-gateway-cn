@@ -10,6 +10,7 @@ resource "random_password" "db_password_main" {
 resource "aws_secretsmanager_secret" "db_secret_main" {
   name_prefix = "${var.name}-DBSecret-"
   recovery_window_in_days = 0
+  kms_key_id              = aws_kms_key.secrets.arn
 }
 
 resource "aws_secretsmanager_secret_version" "db_secret_main_version" {
@@ -86,6 +87,7 @@ resource "aws_db_instance" "database" {
   performance_insights_enabled = true
   enabled_cloudwatch_logs_exports = ["postgresql"]
   auto_minor_version_upgrade = true
+  iam_database_authentication_enabled = true
   monitoring_interval = 60
   monitoring_role_arn      = aws_iam_role.rds_enhanced_monitoring.arn
   parameter_group_name = aws_db_parameter_group.example_pg.name

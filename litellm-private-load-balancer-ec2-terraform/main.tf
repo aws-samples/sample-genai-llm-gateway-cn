@@ -44,6 +44,7 @@ resource "aws_security_group" "linux_sg" {
 
   # Allow SSH inbound
   ingress {
+    description = "SSH access from any IP"
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
@@ -52,6 +53,7 @@ resource "aws_security_group" "linux_sg" {
 
   # Allow all outbound traffic
   egress {
+    description = "Allow all outbound traffic"
     from_port   = 0
     to_port     = 0
     protocol    = "-1"
@@ -101,7 +103,7 @@ resource "aws_instance" "linux_instance" {
   vpc_security_group_ids = [aws_security_group.linux_sg.id]
   key_name               = var.key_pair_name
   iam_instance_profile   = aws_iam_instance_profile.ec2_instance_profile.name
-  associate_public_ip_address = true
+  associate_public_ip_address = false
 
   metadata_options {
     http_endpoint = "enabled"

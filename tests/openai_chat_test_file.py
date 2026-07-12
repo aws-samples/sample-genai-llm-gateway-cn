@@ -234,7 +234,7 @@ def test_invalid_api_key():
     print("Testing invalid API key handling:", flush=True)
 
     # Create a new client with an invalid API key
-    invalid_client = OpenAI(base_url=base_url, api_key="sk-invalid_key_12345")
+    invalid_client = OpenAI(base_url=base_url, api_key="sk-test-placeholder-key")
 
     # Attempt to make a request with the invalid client
     with pytest.raises(OpenAIError) as exc_info:

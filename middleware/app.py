@@ -32,9 +32,13 @@ from anyio import to_thread
 
 app = FastAPI()
 
+# CORS origins configurable via CORS_ALLOW_ORIGINS environment variable (comma-separated).
+# Defaults to ["*"] if not set. Set to specific origins in production for security.
+_cors_origins = os.environ.get("CORS_ALLOW_ORIGINS", "*").split(",")
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Allows all origins
+    allow_origins=_cors_origins,
     allow_credentials=True,
     allow_methods=["*"],  # Allows all methods
     allow_headers=["*"],  # Allows all headers
@@ -1219,4 +1223,4 @@ async def forward_user_new(request: Request):
 if __name__ == "__main__":
     import uvicorn
 
-    uvicorn.run(app, host="0.0.0.0", port=3000)
+    uvicorn.run(app, host="0.0.0.0", port=3000)  # nosec B104

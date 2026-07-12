@@ -17,6 +17,7 @@ resource "random_password" "litellm_salt" {
 resource "aws_secretsmanager_secret" "litellm_master_salt" {
   name_prefix = "LiteLLMMasterSalt-"
   recovery_window_in_days = 0
+  kms_key_id              = aws_kms_key.secrets.arn
 }
 
 locals {
@@ -47,6 +48,7 @@ locals {
 resource "aws_secretsmanager_secret" "db_url_secret" {
   name_prefix = "DBUrlSecret-"
   recovery_window_in_days = 0
+  kms_key_id              = aws_kms_key.secrets.arn
 }
 
 resource "aws_secretsmanager_secret_version" "db_url_secret_ver" {

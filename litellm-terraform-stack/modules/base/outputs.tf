@@ -130,3 +130,13 @@ output "litellm_master_key" {
 output "litellm_salt_key" {
   value = local.litellm_salt_key
 }
+
+output "kms_cloudwatch_key_arn" {
+  description = "ARN of KMS key for CloudWatch Logs encryption"
+  value       = aws_kms_key.cloudwatch.arn
+}
+
+output "kms_secrets_key_arn" {
+  description = "ARN of KMS key for Secrets Manager encryption"
+  value       = aws_kms_key.secrets.arn
+}

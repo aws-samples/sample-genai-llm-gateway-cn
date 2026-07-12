@@ -2,7 +2,7 @@
 set -aeuo pipefail
 
 aws_region=$(aws ec2 describe-availability-zones --output text --query 'AvailabilityZones[0].[RegionName]')
-echo $aws_region
+echo "$aws_region"
 
 APP_NAME=fakeserver
 
@@ -42,7 +42,7 @@ else
     esac
 fi
 
-echo $ARCH
+echo "$ARCH"
 
 echo "about to destroy"
 

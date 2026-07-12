@@ -6,8 +6,9 @@ locals {
 }
 
 resource "aws_ecr_repository" "my_ecr_repository" {
-  count        = local.ecr_ptc_enabled ? 1 : 0
-  name         = "my-public-ecr-cache-repo"
+  count                = local.ecr_ptc_enabled ? 1 : 0
+  name                 = "my-public-ecr-cache-repo"
+  image_tag_mutability = "IMMUTABLE"
   image_scanning_configuration {
     scan_on_push = true
   }

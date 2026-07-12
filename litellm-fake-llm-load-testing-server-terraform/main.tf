@@ -77,10 +77,56 @@ resource "aws_ecs_task_definition" "fake_server_task_def" {
   ])
 }
 
+# KMS Key for CloudWatch Logs encryption
+resource "aws_kms_key" "cloudwatch" {
+  description             = "KMS key for FakeServer CloudWatch Logs encryption"
+  enable_key_rotation     = true
+  deletion_window_in_days = 30
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Id      = "key-cloudwatch-fake-server"
+    Statement = [
+      {
+        Sid    = "Enable IAM User Permissions"
+        Effect = "Allow"
+        Principal = {
+          AWS = "arn:${data.aws_partition.current.partition}:iam::${data.aws_caller_identity.current.account_id}:root"
+        }
+        Action   = "kms:*"
+        Resource = "*"
+      },
+      {
+        Sid    = "Allow CloudWatch Logs"
+        Effect = "Allow"
+        Principal = {
+          Service = "logs.${data.aws_region.current.name}.amazonaws.com"
+        }
+        Action = [
+          "kms:Encrypt*",
+          "kms:Decrypt*",
+          "kms:ReEncrypt*",
+          "kms:GenerateDataKey*",
+          "kms:Describe*"
+        ]
+        Resource = "*"
+        Condition = {
+          ArnLike = {
+            "kms:EncryptionContext:aws:logs:arn" = "arn:${data.aws_partition.current.partition}:logs:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:*"
+          }
+        }
+      }
+    ]
+  })
+}
+
+data "aws_caller_identity" "current" {}
+
 # CloudWatch Log Group
 resource "aws_cloudwatch_log_group" "fake_server_logs" {
   name              = "/ecs/FakeServer"
   retention_in_days = 30
+  kms_key_id        = aws_kms_key.cloudwatch.arn
 }
 
 # IAM Roles
@@ -131,7 +177,8 @@ resource "aws_lb" "fake_server_alb" {
   security_groups    = [aws_security_group.alb_sg.id]
   subnets            = data.aws_subnets.public.ids
 
-  enable_deletion_protection = false
+  enable_deletion_protection = true
+  drop_invalid_header_fields = true
 }
 
 # ALB HTTPS Listener
@@ -184,6 +231,7 @@ resource "aws_security_group" "alb_sg" {
   }
 
   egress {
+    description = "Allow all outbound traffic"
     from_port   = 0
     to_port     = 0
     protocol    = "-1"
@@ -205,6 +253,7 @@ resource "aws_security_group" "ecs_sg" {
   }
 
   egress {
+    description = "Allow all outbound traffic"
     from_port   = 0
     to_port     = 0
     protocol    = "-1"

@@ -2,7 +2,7 @@
 set -aeuo pipefail
 
 aws_region=$(aws ec2 describe-availability-zones --output text --query 'AvailabilityZones[0].[RegionName]')
-echo $aws_region
+echo "$aws_region"
 
 APP_NAME=fakeserver
 
@@ -42,11 +42,11 @@ else
     esac
 fi
 
-echo $ARCH
+echo "$ARCH"
 
 echo "about to build and push image"
 cd docker
-./docker-build-and-deploy.sh $APP_NAME $ARCH
+./docker-build-and-deploy.sh "$APP_NAME" "$ARCH"
 cd ..
 
 echo "about to deploy"
@@ -77,8 +77,8 @@ if [ $? -eq 0 ]; then
     LITELLM_ECS_TASK=$(terraform output -raw fake_server_ecs_task)
 
     aws ecs update-service \
-        --cluster $LITELLM_ECS_CLUSTER \
-        --service $LITELLM_ECS_TASK \
+        --cluster "$LITELLM_ECS_CLUSTER" \
+        --service "$LITELLM_ECS_TASK" \
         --force-new-deployment \
         --desired-count 3 \
         --no-cli-pager

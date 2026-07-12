@@ -6,6 +6,13 @@ resource "aws_s3_bucket" "config_bucket" {
   force_destroy = true
 }
 
+resource "aws_s3_bucket_versioning" "config_bucket" {
+  bucket = aws_s3_bucket.config_bucket.id
+  versioning_configuration {
+    status = "Enabled"
+  }
+}
+
 resource "aws_s3_bucket_server_side_encryption_configuration" "config_bucket" {
   bucket = aws_s3_bucket.config_bucket.id
 

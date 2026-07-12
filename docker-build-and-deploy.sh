@@ -21,7 +21,7 @@ if [ "$BUILD_FROM_SOURCE" = "true" ]; then
     if [ ! -d "litellm-source" ]; then
         echo "Fetching source for LiteLLM version ${LITELLM_VERSION}"
         mkdir litellm-source
-        curl -L https://github.com/BerriAI/litellm/archive/refs/tags/${LITELLM_VERSION}.tar.gz | tar -xz -C litellm-source --strip-components=1
+        curl -L "https://github.com/BerriAI/litellm/archive/refs/tags/${LITELLM_VERSION}.tar.gz" | tar -xz -C litellm-source --strip-components=1
     else
         LITELLM_SOURCE_VERSION=$(yq '.tool.poetry.version' litellm-source/pyproject.toml)
         if [ v"$LITELLM_SOURCE_VERSION" != "$LITELLM_VERSION" ]; then
@@ -47,29 +47,29 @@ else
 fi
 
 # Check if the repository already exists
-REPO_EXISTS=$(aws ecr describe-repositories --repository-names $APP_NAME 2>/dev/null)
+REPO_EXISTS=$(aws ecr describe-repositories --repository-names "$APP_NAME" 2>/dev/null)
 
 if [ -z "$REPO_EXISTS" ]; then
     # Repository does not exist, create it with tag
-    aws ecr create-repository --repository-name $APP_NAME --tags Key=project,Value=llmgateway
+    aws ecr create-repository --repository-name "$APP_NAME" --tags Key=project,Value=llmgateway
 else
     echo "Repository $APP_NAME already exists, checking tags..."
     
     # Get current tags for the repository
-    CURRENT_TAGS=$(aws ecr list-tags-for-resource --resource-arn arn:aws:ecr:${AWS_REGION}:${AWS_ACCOUNT_ID}:repository/${APP_NAME})
+    CURRENT_TAGS=$(aws ecr list-tags-for-resource --resource-arn "arn:aws:ecr:${AWS_REGION}:${AWS_ACCOUNT_ID}:repository/${APP_NAME}")
     
     # Check if project=llmgateway tag exists
     if ! echo "$CURRENT_TAGS" | grep -q '"Key": "project".*"Value": "llmgateway"'; then
         echo "Adding project=llmgateway tag..."
         aws ecr tag-resource \
-            --resource-arn arn:aws:ecr:${AWS_REGION}:${AWS_ACCOUNT_ID}:repository/${APP_NAME} \
+            --resource-arn "arn:aws:ecr:${AWS_REGION}:${AWS_ACCOUNT_ID}:repository/${APP_NAME}" \
             --tags Key=project,Value=llmgateway
     else
         echo "Tag project=llmgateway already exists."
     fi
 fi
 
-echo $ARCH
+echo "$ARCH"
 
 case $ARCH in
     "x86")
@@ -84,9 +84,9 @@ case $ARCH in
         ;;
 esac
 
-echo $DOCKER_ARCH
+echo "$DOCKER_ARCH"
 
-aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $ECR_DOMAIN
+aws ecr get-login-password --region "$AWS_REGION" | docker login --username AWS --password-stdin "$ECR_DOMAIN"
 # Pass base image overrides for China region (set in .env)
 BUILD_ARGS="--build-arg LITELLM_VERSION=${LITELLM_VERSION}"
 if [ -n "${LITELLM_BASE_IMAGE:-}" ] && [ "$APP_NAME" != "litellm-middleware" ]; then
@@ -99,7 +99,7 @@ if [ -n "${PIP_INDEX_URL:-}" ]; then
   BUILD_ARGS="$BUILD_ARGS --build-arg PIP_INDEX_URL=${PIP_INDEX_URL}"
 fi
 
-docker build --platform $DOCKER_ARCH $BUILD_ARGS -t $APP_NAME\:${LITELLM_VERSION} .
+docker build --platform "$DOCKER_ARCH" $BUILD_ARGS -t "$APP_NAME:${LITELLM_VERSION}" .
 echo "Tagging image with ${APP_NAME}:${LITELLM_VERSION}"
-docker tag $APP_NAME\:${LITELLM_VERSION} $ECR_DOMAIN/$APP_NAME\:${LITELLM_VERSION}
-docker push $ECR_DOMAIN/$APP_NAME\:${LITELLM_VERSION}
+docker tag "$APP_NAME:${LITELLM_VERSION}" "$ECR_DOMAIN/$APP_NAME:${LITELLM_VERSION}"
+docker push "$ECR_DOMAIN/$APP_NAME:${LITELLM_VERSION}"

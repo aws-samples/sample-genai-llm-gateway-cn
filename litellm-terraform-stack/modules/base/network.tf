@@ -36,7 +36,7 @@ resource "aws_subnet" "public" {
   vpc_id            = aws_vpc.new[0].id
   cidr_block        = cidrsubnet(aws_vpc.new[0].cidr_block, 3, count.index)
   availability_zone = element(data.aws_availability_zones.available.names, count.index)
-  map_public_ip_on_launch = true
+  map_public_ip_on_launch = false
 }
 
 resource "aws_subnet" "private" {
@@ -102,6 +102,7 @@ resource "aws_cloudwatch_log_group" "vpc_flow_logs" {
   count             = local.creating_new_vpc ? 1 : 0
   name_prefix              = "/aws/vpc/${var.name}-flow-logs"
   retention_in_days = 365
+  kms_key_id        = aws_kms_key.cloudwatch.arn
 }
 
 resource "aws_flow_log" "this" {

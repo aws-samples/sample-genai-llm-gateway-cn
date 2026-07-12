@@ -357,3 +357,15 @@ variable "langfuse_host" {
   type    = string
   description = "the hostname of your langfuse deployment."
 }
+
+variable "kms_cloudwatch_key_arn" {
+  description = "ARN of KMS key for CloudWatch Logs encryption"
+  type        = string
+  default     = ""
+}
+
+variable "kms_secrets_key_arn" {
+  description = "ARN of KMS key for Secrets Manager encryption"
+  type        = string
+  default     = ""
+}

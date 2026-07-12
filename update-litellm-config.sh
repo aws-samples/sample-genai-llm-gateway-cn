@@ -2,7 +2,7 @@
 set -aeuo pipefail
 
 aws_region=$(aws ec2 describe-availability-zones --output text --query 'AvailabilityZones[0].[RegionName]')
-echo $aws_region
+echo "$aws_region"
 
 # Load environment variables from .env file
 source .env
@@ -20,7 +20,7 @@ cd ..
 echo "uploading config.yaml to bucket $ConfigBucketName"  # This was missing the closing quote
 
 # Add the actual upload command
-aws s3 cp config/config.yaml s3://$ConfigBucketName/config.yaml --region $aws_region
+aws s3 cp config/config.yaml "s3://$ConfigBucketName/config.yaml" --region "$aws_region"
 
 echo "Upload complete"
 
@@ -32,10 +32,10 @@ if [ "$DEPLOYMENT_PLATFORM" = "ECS" ]; then
     echo "Rebooting ECS Task $LITELLM_ECS_TASK on ECS cluster $LITELLM_ECS_CLUSTER"
 
     aws ecs update-service \
-        --cluster $LITELLM_ECS_CLUSTER \
-        --service $LITELLM_ECS_TASK \
+        --cluster "$LITELLM_ECS_CLUSTER" \
+        --service "$LITELLM_ECS_TASK" \
         --force-new-deployment \
-        --desired-count $DESIRED_CAPACITY \
+        --desired-count "$DESIRED_CAPACITY" \
         --no-cli-pager
 fi
 
@@ -44,6 +44,6 @@ if [ "$DEPLOYMENT_PLATFORM" = "EKS" ]; then
     EKS_DEPLOYMENT_NAME=$(terraform output -raw eks_deployment_name)
     echo "Rebooting EKS deployment $EKS_DEPLOYMENT_NAME on EKS cluster $EKS_CLUSTER_NAME"
 
-    aws eks update-kubeconfig --region $aws_region --name $EKS_CLUSTER_NAME
-    kubectl rollout restart deployment $EKS_DEPLOYMENT_NAME
+    aws eks update-kubeconfig --region "$aws_region" --name "$EKS_CLUSTER_NAME"
+    kubectl rollout restart deployment "$EKS_DEPLOYMENT_NAME"
 fi
