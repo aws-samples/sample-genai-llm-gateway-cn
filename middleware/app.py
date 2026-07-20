@@ -420,8 +420,12 @@ def parse_prompt_arn(arn: str):
         return after_prompt, None
 
 
+# Matches a prompt placeholder, tolerating whitespace inside the braces.
+PROMPT_PLACEHOLDER_PATTERN = re.compile(r"{{\s*(\w+)\s*}}")
+
+
 def validate_prompt_variables(template_text: str, variables: Dict[str, Any]):
-    found_placeholders = re.findall(r"{{\s*(\w+)\s*}}", template_text)
+    found_placeholders = PROMPT_PLACEHOLDER_PATTERN.findall(template_text)
     placeholders_set = set(found_placeholders)
     variables_set = set(variables.keys())
 
@@ -433,10 +437,14 @@ def validate_prompt_variables(template_text: str, variables: Dict[str, Any]):
 
 
 def construct_prompt_text_from_variables(template_text: str, variables: dict) -> str:
-    for var_name, var_value in variables.items():
-        value = var_value.get("text", "")
-        template_text = template_text.replace(f"{{{{{var_name}}}}}", value)
-    return template_text
+    def _substitute(match):
+        var_name = match.group(1)
+        return variables.get(var_name, {}).get("text", "")
+
+    # Substitute with the same pattern validate_prompt_variables accepts, so
+    # placeholders written with whitespace inside the braces (e.g. "{{ name }}")
+    # are replaced instead of being left in the prompt verbatim.
+    return PROMPT_PLACEHOLDER_PATTERN.sub(_substitute, template_text)
 
 
 @app.get("/")
