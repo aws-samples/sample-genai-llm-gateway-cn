@@ -8,6 +8,13 @@ fi
 APP_NAME=$1
 ARCH=$2
 
+# Load .env from the repo root so the script also works when run standalone.
+# deploy.sh already exports these (it uses `set -a`), so this is a no-op there.
+if [ -f ../.env ]; then
+    # shellcheck disable=SC1091
+    source ../.env
+fi
+
 AWS_REGION=$(aws ec2 describe-availability-zones --output text --query 'AvailabilityZones[0].[RegionName]')
 export AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query "Account" --output text)
 
@@ -58,6 +65,17 @@ esac
 echo "$DOCKER_ARCH"
 
 aws ecr get-login-password --region "$AWS_REGION" | docker login --username AWS --password-stdin "$ECR_DOMAIN"
-docker build --platform "$DOCKER_ARCH" -t "$APP_NAME" .
+
+# Pass base image / pip mirror overrides for China regions (set in .env).
+# Kept as an array so arguments are not word-split.
+BUILD_ARGS=()
+if [ -n "${PYTHON_BASE_IMAGE:-}" ]; then
+  BUILD_ARGS+=(--build-arg "PYTHON_BASE_IMAGE=${PYTHON_BASE_IMAGE}")
+fi
+if [ -n "${PIP_INDEX_URL:-}" ]; then
+  BUILD_ARGS+=(--build-arg "PIP_INDEX_URL=${PIP_INDEX_URL}")
+fi
+
+docker build --platform "$DOCKER_ARCH" "${BUILD_ARGS[@]}" -t "$APP_NAME" .
 docker tag "$APP_NAME:latest" "$ECR_DOMAIN/$APP_NAME:latest"
 docker push "$ECR_DOMAIN/$APP_NAME:latest"
