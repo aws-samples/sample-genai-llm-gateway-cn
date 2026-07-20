@@ -88,18 +88,18 @@ echo "$DOCKER_ARCH"
 
 aws ecr get-login-password --region "$AWS_REGION" | docker login --username AWS --password-stdin "$ECR_DOMAIN"
 # Pass base image overrides for China region (set in .env)
-BUILD_ARGS="--build-arg LITELLM_VERSION=${LITELLM_VERSION}"
+BUILD_ARGS=(--build-arg "LITELLM_VERSION=${LITELLM_VERSION}")
 if [ -n "${LITELLM_BASE_IMAGE:-}" ] && [ "$APP_NAME" != "litellm-middleware" ]; then
-  BUILD_ARGS="$BUILD_ARGS --build-arg LITELLM_BASE_IMAGE=${LITELLM_BASE_IMAGE}"
+  BUILD_ARGS+=(--build-arg "LITELLM_BASE_IMAGE=${LITELLM_BASE_IMAGE}")
 fi
 if [ -n "${PYTHON_BASE_IMAGE:-}" ] && [ "$APP_NAME" = "litellm-middleware" ]; then
-  BUILD_ARGS="$BUILD_ARGS --build-arg PYTHON_BASE_IMAGE=${PYTHON_BASE_IMAGE}"
+  BUILD_ARGS+=(--build-arg "PYTHON_BASE_IMAGE=${PYTHON_BASE_IMAGE}")
 fi
 if [ -n "${PIP_INDEX_URL:-}" ]; then
-  BUILD_ARGS="$BUILD_ARGS --build-arg PIP_INDEX_URL=${PIP_INDEX_URL}"
+  BUILD_ARGS+=(--build-arg "PIP_INDEX_URL=${PIP_INDEX_URL}")
 fi
 
-docker build --platform "$DOCKER_ARCH" "$BUILD_ARGS" -t "$APP_NAME:${LITELLM_VERSION}" .
+docker build --platform "$DOCKER_ARCH" "${BUILD_ARGS[@]}" -t "$APP_NAME:${LITELLM_VERSION}" .
 echo "Tagging image with ${APP_NAME}:${LITELLM_VERSION}"
 docker tag "$APP_NAME:${LITELLM_VERSION}" "$ECR_DOMAIN/$APP_NAME:${LITELLM_VERSION}"
 docker push "$ECR_DOMAIN/$APP_NAME:${LITELLM_VERSION}"
